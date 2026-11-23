@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ChessLab — public site
 
-## Getting Started
+The public marketing site for **ChessLab**, an offline-first desktop chess studio.
+Built with Next.js 16 (App Router) and a hand-authored AMOLED design system.
 
-First, run the development server:
+## what's here
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Overview: hero with the study board, studio features, privacy, piece set, release CTA |
+| `/download` | Planned platforms, what ships in the box, pre-release checklist |
+| `/roadmap` | Release milestones with progress, plus the principles behind the build |
+| `not-found` | Off-the-board 404 |
+| `opengraph-image` | Generated social card |
+| `icon.svg` | App icon / favicon |
+
+## design notes
+
+- **AMOLED black canvas.** `#000` everywhere; depth comes from 1px seams
+  (`rgba(255,255,255,.09)`), soft vignettes, and a single emerald signal colour.
+- **No raster imagery.** Every visual is vector:
+  - `src/components/Pieces.tsx` — the chess set. Each piece is a small set of filled
+    primitives that share one gradient; a clipped light stack (key light, form shadow,
+    board bounce) plus a single-plate extruded base gives it depth. The same geometry
+    renders as flat `mono` glyphs on the analysis board.
+  - `src/components/StudyBoard.tsx` — a full analysis-board mock-up in SVG, including
+    coordinates, highlighted moves, and evaluation chrome.
+  - `src/components/BrandMark.tsx` — the knight's-move monogram.
+- **Typography.** Self-hosted variable fonts via `next/font/local`
+  (Bricolage Grotesque for display, Inter Tight for body, JetBrains Mono for meta,
+  Instrument Serif italic for accents). No external font requests at runtime.
+- **Motion.** CSS only: page enter, ticker, floating labels, pulse dots, and the flow
+  animation. Everything collapses under `prefers-reduced-motion`.
+
+## development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Static output: every route prerenders — no client-side data fetching, no runtime fonts.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## fonts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The `.woff2` files live in `src/app/fonts/` and are licensed under the SIL Open Font
+License (Bricolage Grotesque, Inter Tight, JetBrains Mono, Instrument Serif).
