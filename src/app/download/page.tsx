@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Piece, PieceDefs } from "@/components/Pieces";
+import { PieceArt, PieceDefs } from "@/components/Pieces";
+
+export const metadata: Metadata = {
+  title: "Download",
+  description:
+    "ChessLab is in active development for Windows, macOS and Linux. Public installers are not available yet — this page updates the moment verified builds are ready.",
+};
 
 type Platform = {
   name: string;
@@ -51,6 +58,13 @@ const STEPS = [
   },
 ];
 
+const IN_THE_BOX = [
+  { label: "Bundled Stockfish 19 build" },
+  { label: "Local SQLite game database" },
+  { label: "Works fully offline" },
+  { label: "No account, no telemetry" },
+];
+
 function PlatformIcon({ icon }: { icon: Platform["icon"] }) {
   const shared = {
     viewBox: "0 0 24 24",
@@ -87,104 +101,153 @@ function PlatformIcon({ icon }: { icon: Platform["icon"] }) {
 
 export default function DownloadPage() {
   return (
-    <div className="subpage">
+    <div className="page download-page">
       <PieceDefs />
 
-      <section className="page-frame subpage__hero">
-        <p className="eyebrow">
-          <span className="eyebrow__dot" /> Public release · In development
-        </p>
-        <div className="subpage__hero-grid">
-          <h1 className="subpage__title">
-            A studio for your <em className="serif-em">desktop.</em>
-          </h1>
-          <div className="subpage__hero-aside">
-            <p>
-              ChessLab is being prepared for Windows, macOS, and Linux. Public installers are
-              not available yet — this page will update the moment verified builds are ready.
-            </p>
-            <Link className="link-arrow" href="/roadmap">
-              Track the release
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
+      <section className="dl-hero">
+        <div className="wrap">
+          <p className="eyebrow">
+            <span className="eyebrow__num">(</span> Public release · In development{" "}
+            <span className="eyebrow__num">)</span>
+          </p>
+
+          <div className="dl-hero__grid">
+            <div>
+              <h1 className="display-xl">
+                A studio for
+                <br />
+                <span className="stroke-type">your desktop</span>
+              </h1>
+              <div className="dl-hero__meta">
+                <span>v0.1 · pre-release</span>
+                <span>Win · macOS · Linux</span>
+                <span>Offline by default</span>
+              </div>
+            </div>
+
+            <div className="dl-hero__aside">
+              <p>
+                ChessLab is being prepared for Windows, macOS, and Linux. Public installers are
+                not available yet — this page will update the moment verified builds are ready.
+              </p>
+              <Link className="btn-pill btn-pill--outline" href="/roadmap">
+                Track the release
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="page-frame subpage__body" aria-labelledby="platforms-title">
-        <div className="notice" role="status">
-          <span className="notice__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="8.4" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M12 8v5M12 16.2v.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </span>
-          <span className="notice__copy">
-            <b>Downloads are coming soon</b>
-            <small>The public beta is in development. No installer links are live yet.</small>
-          </span>
-          <span className="notice__tag">v0.1 · pre-release</span>
+      {/* status banner + platform cards */}
+      <section className="section section--tight">
+        <div className="wrap">
+          <div className="notice" role="status">
+            <span className="notice__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8.4" stroke="currentColor" strokeWidth="1.4" />
+                <path d="M12 8v5M12 16.2v.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </span>
+            <span className="notice__copy">
+              <b>Downloads are coming soon</b>
+              <small>The public beta is in development. No installer links are live yet.</small>
+            </span>
+            <span className="notice__tag">v0.1 · pre-release</span>
+          </div>
+
+          <h2 className="sr-only">Planned platforms</h2>
+
+          <div className="platforms">
+            {PLATFORMS.map((platform) => (
+              <article className="platform" key={platform.name}>
+                <div className="platform__top">
+                  <span className="platform__icon">
+                    <PlatformIcon icon={platform.icon} />
+                  </span>
+                  <span className="platform__state">
+                    <i /> Coming soon
+                  </span>
+                </div>
+                <h3 className="display-sm">{platform.name}</h3>
+                <p className="platform__arch">{platform.arch}</p>
+                <p className="platform__notes">{platform.notes}</p>
+                <button className="platform__button" type="button" disabled>
+                  <span>Not available yet</span>
+                  <span className="platform__size">{platform.size}</span>
+                </button>
+              </article>
+            ))}
+          </div>
         </div>
+      </section>
 
-        <h2 className="sr-only" id="platforms-title">
-          Planned platforms
-        </h2>
-
-        <div className="platforms">
-          {PLATFORMS.map((platform) => (
-            <article className="platform" key={platform.name}>
-              <div className="platform__top">
-                <span className="platform__icon">
-                  <PlatformIcon icon={platform.icon} />
-                </span>
-                <span className="platform__state">Coming soon</span>
+      {/* what ships in the box */}
+      <section className="section box-band">
+        <div className="wrap">
+          <div className="box">
+            <div className="box__copy">
+              <p className="eyebrow">
+                <span className="eyebrow__num">01</span> What ships in the box
+              </p>
+              <h2 className="display-md">
+                An app, an engine,
+                <br />
+                <span className="serif">and your games.</span>
+              </h2>
+              <p>
+                The installer bundles Stockfish 19 and the study database. No account, no
+                server round trip, no telemetry — launch it, import a game, and start working.
+              </p>
+              <ul className="box__list">
+                {IN_THE_BOX.map((item) => (
+                  <li key={item.label}>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M3 8.4 6.3 11.6 13 4.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="box__art" aria-hidden="true">
+              <span className="box__ring" />
+              <div className="box__piece box__piece--a">
+                <PieceArt kind="rook" material="ivory" glow />
               </div>
-              <h3>{platform.name}</h3>
-              <p className="platform__arch">{platform.arch}</p>
-              <p className="platform__notes">{platform.notes}</p>
-              <button className="platform__button" type="button" disabled>
-                <span>Not available yet</span>
-                <span className="platform__size">{platform.size}</span>
-              </button>
-            </article>
-          ))}
-        </div>
-
-        <div className="local-first">
-          <div className="local-first__copy">
-            <p className="eyebrow">
-              <span className="eyebrow__index">LOCAL-FIRST</span> What ships in the box
-            </p>
-            <h2>An app, an engine, and your games. That&apos;s it.</h2>
-            <p>
-              The installer bundles Stockfish 19 and the study database. No account, no server
-              round trip, no telemetry — launch it, import a game, and start working.
-            </p>
-            <ul className="local-first__list">
-              <li>Bundled Stockfish 19 build</li>
-              <li>Local SQLite game database</li>
-              <li>Works fully offline</li>
-            </ul>
-          </div>
-          <div className="local-first__art" aria-hidden="true">
-            <span className="local-first__ring" />
-            <Piece kind="rook" tone="obsidian" className="piece" />
-            <Piece kind="knight" tone="ivory" className="piece" />
-            <Piece kind="bishop" tone="emerald" className="piece" />
+              <div className="box__piece box__piece--b">
+                <PieceArt kind="knight" material="obsidian" />
+              </div>
+              <div className="box__piece box__piece--c">
+                <PieceArt kind="pawn" material="ember" />
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        <section className="prep" aria-labelledby="prep-title">
-          <div className="prep__head">
-            <p className="eyebrow">
-              <span className="eyebrow__index">NEXT</span> Before release
+      {/* before release */}
+      <section className="section">
+        <div className="wrap">
+          <header className="section-head">
+            <div>
+              <p className="eyebrow">
+                <span className="eyebrow__num">02</span> Before release
+              </p>
+              <h2 className="display-md">
+                Ready means more
+                <br />
+                <span className="serif">than downloadable.</span>
+              </h2>
+            </div>
+            <p className="section-head__lede">
+              We&apos;ll publish the details alongside the builds, not after them.
             </p>
-            <h2 id="prep-title">Ready means more than downloadable.</h2>
-            <p>We&apos;ll publish the details alongside the builds, not after them.</p>
-          </div>
-          <div className="prep__list">
+          </header>
+
+          <div className="prep">
             {STEPS.map((step) => (
               <article className="prep__step" key={step.number}>
                 <span className="prep__number">{step.number}</span>
@@ -193,16 +256,16 @@ export default function DownloadPage() {
               </article>
             ))}
           </div>
-        </section>
 
-        <div className="subpage__bottom">
-          <p>Want to follow what&apos;s taking shape? The roadmap is the most up-to-date view of the work.</p>
-          <Link className="btn btn--ghost" href="/roadmap">
-            Open the release roadmap
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          <div className="dl-bottom">
+            <p>Want to follow what&apos;s taking shape? The roadmap is the most up-to-date view.</p>
+            <Link className="btn-pill btn-pill--ember" href="/roadmap">
+              Open the release roadmap
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

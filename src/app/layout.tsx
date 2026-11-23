@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { SiteNav } from "@/components/SiteNav";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import "./globals.css";
 
@@ -42,25 +42,25 @@ const serif = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://chesslab.app"),
   title: {
-    default: "ChessLab — The offline chess studio",
+    default: "ChessLab — Master the game before you play it",
     template: "%s · ChessLab",
   },
   description:
-    "An offline-first chess studio for analysis, game review, opening repertoire, and long-term improvement. Powered by Stockfish 19. Your games stay on your machine.",
+    "An offline-first chess studio for analysis, review, repertoire, and tournaments. Stockfish 19 on your own machine, with no account and no games sent away.",
   applicationName: "ChessLab",
-  keywords: ["chess", "chess analysis", "Stockfish", "offline chess", "game review", "opening repertoire"],
+  keywords: ["chess", "chess analysis", "Stockfish", "offline chess", "game review", "repertoire", "tournaments"],
   openGraph: {
-    title: "ChessLab — The offline chess studio",
+    title: "ChessLab — Master the game before you play it",
     description:
-      "Master every move. Offline-first analysis, phase-by-phase review, and a repertoire that sticks.",
+      "Offline-first analysis, phase-by-phase review, and a repertoire that sticks. Powered by Stockfish 19.",
     type: "website",
     siteName: "ChessLab",
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ChessLab — The offline chess studio",
-    description: "Master every move. Offline-first chess analysis, on your machine.",
+    title: "ChessLab — Master the game before you play it",
+    description: "Offline-first chess analysis, on your machine.",
   },
 };
 
@@ -79,11 +79,11 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable} ${serif.variable}`}
     >
-      <body className="app-body">
+      <body>
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <SiteNav />
+        <SiteHeader />
         <main id="main">{children}</main>
         <SiteFooter />
       </body>

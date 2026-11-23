@@ -1,359 +1,296 @@
 import Link from "next/link";
-import { Piece, PieceDefs } from "@/components/Pieces";
-import { StudyBoard } from "@/components/StudyBoard";
+import { PieceArt, PieceDefs } from "@/components/Pieces";
 
-const PRINCIPLES = [
-  { index: "01", label: "Runs on your device", value: "Offline-first" },
-  { index: "02", label: "Powered by Stockfish 19", value: "On-device engine" },
-  { index: "03", label: "No account required", value: "Private by default" },
+const HERO_BULLETS = [
+  { num: "01", label: "AI-powered training" },
+  { num: "02", label: "Competitive rankings" },
+];
+
+const MODES = [
+  {
+    num: "01",
+    title: "Play",
+    copy: "A quiet board that gets out of the way — local games, saved on your machine.",
+    href: "/studio",
+    piece: "pawn" as const,
+  },
+  {
+    num: "02",
+    title: "Analyse",
+    copy: "Stockfish 19 in the loop: variations, evaluations, and the reason behind every move.",
+    href: "/analysis",
+    piece: "knight" as const,
+  },
+  {
+    num: "03",
+    title: "Compete",
+    copy: "Tournament brackets with real pairings, results and standings — no cloud required.",
+    href: "/tournaments",
+    piece: "rook" as const,
+  },
+];
+
+const STATS = [
+  { value: "19", label: "Stockfish build, bundled locally" },
+  { value: "0", label: "Accounts, subscriptions or sign-ins" },
+  { value: "45s", label: "Average full-game review pass" },
 ];
 
 export default function Home() {
   return (
-    <div className="home-page">
+    <div className="page home">
       <PieceDefs />
 
-      {/* ---------------------------------------------------------- hero */}
-      <section className="hero page-frame" aria-labelledby="hero-title">
-        <div className="hero__topline">
-          <p className="eyebrow">
-            <span className="eyebrow__dot" /> A private chess studio
-          </p>
-          <p className="hero__topline-note">
-            Desktop app <span>/</span> In development
-          </p>
+      {/* ---------------------------------------------- cinematic hero */}
+      <section className="hero">
+        <div className="hero__beams" aria-hidden="true">
+          <span className="hero__beam hero__beam--ember" />
+          <span className="hero__beam hero__beam--white" />
         </div>
 
-        <div className="hero__layout">
+        <div className="hero__inner">
           <div className="hero__copy">
-            <h1 className="hero__title" id="hero-title">
-              <span className="hero__title-line">Think one</span>
-              <span className="hero__title-line hero__title-line--indent">
-                move <span className="hero__title-rule" aria-hidden="true" />
+            <p className="eyebrow rise">
+              <span className="eyebrow__num">(</span> Offline-first chess studio{" "}
+              <span className="eyebrow__num">)</span>
+            </p>
+
+            <h1 className="hero__title">
+              <span className="hero__line rise">Master</span>
+              <span className="hero__line hero__line--aside rise-2">
+                <span className="hero__line-alt">The</span>
+                <span className="hero__rule" aria-hidden="true" />
               </span>
-              <span className="hero__title-line">
-                <em className="serif-em">ahead.</em>
+              <span className="hero__line rise-3">
+                <span className="stroke-type">Chess</span>
               </span>
             </h1>
 
-            <p className="hero__lede">
-              ChessLab is an offline-first studio for people who want to understand their
-              chess — not just play more of it. Analysis, review, and repertoire, all on your
-              own machine.
+            <p className="hero__lede rise-3">
+              Turn your chess vision into true mastery with intelligent, results-focused
+              analysis — all on your own machine.
             </p>
 
-            <div className="hero__actions">
-              <Link className="btn btn--solid" href="/download">
-                Get the beta
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="hero__actions rise-3">
+              <Link className="btn-pill btn-pill--light" href="/download">
+                Play now
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
-              <Link className="btn btn--ghost" href="/#studio">
-                See the studio
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 3v10M4.5 9.5 8 13l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <Link className="btn-pill btn-pill--outline" href="/studio">
+                Watch the studio
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
-            </div>
-
-            <div className="hero__meta">
-              <span className="hero__meta-pill">
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M8 2.2 13 4.4v4.1c0 3.2-2.1 5.5-5 6.7-2.9-1.2-5-3.5-5-6.7V4.4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                  <path d="m5.9 8.2 1.5 1.5 2.8-2.9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Your games stay yours
-              </span>
-              <span className="hero__meta-pill">
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <circle cx="8" cy="8" r="5.6" stroke="currentColor" strokeWidth="1.2" />
-                  <path d="M8 4.8V8l2.2 1.4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                </svg>
-                45-second review
-              </span>
             </div>
           </div>
 
-          <div className="hero__stage">
-            <span className="hero__annotation" aria-hidden="true">
-              <i /> Sicilian · Accelerated Dragon
-            </span>
-            <StudyBoard overlay />
-            <div className="hero__figure" aria-hidden="true">
-              <Piece kind="king" tone="emerald" className="piece" />
-              <span className="hero__figure-label">
-                <span>Stockfish 19</span>
-                <b>Bd2 · best move</b>
-                <small>+0.42 · depth 34</small>
-              </span>
+          <ul className="hero__stack" aria-label="Highlights">
+            {HERO_BULLETS.map((item) => (
+              <li key={item.num}>
+                <span>{item.num}</span>
+                <b>{item.label}</b>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hero__stage" aria-hidden="true">
+            <div className="hero__figure hero__figure--king">
+              <PieceArt kind="king" material="obsidian" glow />
+            </div>
+            <div className="hero__figure hero__figure--bishop">
+              <PieceArt kind="bishop" material="ivory" glow />
+            </div>
+            <div className="hero__figure hero__figure--knight">
+              <PieceArt kind="knight" material="obsidian" />
+            </div>
+            <div className="hero__figure hero__figure--pawn">
+              <PieceArt kind="pawn" material="chrome" />
             </div>
           </div>
+
+          <span className="hero__spec hero__spec--left" aria-hidden="true">
+            sicilian · b90
+          </span>
+          <span className="hero__spec hero__spec--right" aria-hidden="true">
+            eval +0.42 · depth 34
+          </span>
+
+          <aside className="hero__card" aria-label="Sample review summary">
+            <div className="hero__card-top">
+              <span className="hero__card-live">
+                <i /> Now analysing
+              </span>
+              <span>B90 · Najdorf</span>
+            </div>
+            <div className="hero__card-body">
+              <div>
+                <span className="hero__card-k">Evaluation</span>
+                <b>+0.42</b>
+              </div>
+              <div>
+                <span className="hero__card-k">Accuracy</span>
+                <b>92.4%</b>
+              </div>
+              <div>
+                <span className="hero__card-k">Turning point</span>
+                <b>16…d×e4</b>
+              </div>
+            </div>
+            <div className="hero__card-bar" aria-hidden="true">
+              <i style={{ width: "58%" }} />
+            </div>
+          </aside>
         </div>
 
-        <ul className="hero__principles" aria-label="ChessLab principles">
-          {PRINCIPLES.map((principle) => (
-            <li key={principle.index}>
-              <span className="hero__principle-index">{principle.index}</span>
-              <span className="hero__principle-copy">
-                <b>{principle.label}</b>
-                <small>{principle.value}</small>
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className="hero__foot">
+          <span className="hero__scroll">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 3v13M5 11.5 10 16.5l5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Scroll to explore
+          </span>
+          <span className="hero__foot-meta">
+            Windows · macOS · Linux <i /> Private beta
+          </span>
+        </div>
       </section>
 
-      {/* ------------------------------------------------------- marquee */}
-      <div className="ticker" aria-hidden="true">
-        <div className="ticker__track">
+      {/* --------------------------------------------------- marquee */}
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee__track">
           {Array.from({ length: 2 }).map((_, group) => (
-            <span className="ticker__group" key={group}>
-              <span>SEE THE WHOLE POSITION</span>
-              <i>◆</i>
-              <span>REVIEW WITH PERSPECTIVE</span>
-              <i>◆</i>
-              <span>BUILD A REPERTOIRE</span>
-              <i>◆</i>
-              <span>KNOW WHAT TO WORK ON</span>
-              <i>◆</i>
+            <span className="marquee__group" key={group}>
+              <span>Analysis</span>
+              <i>✳</i>
+              <span>Review</span>
+              <i>✳</i>
+              <span>Repertoire</span>
+              <i>✳</i>
+              <span>Tournaments</span>
+              <i>✳</i>
+              <span>Rankings</span>
+              <i>✳</i>
             </span>
           ))}
         </div>
       </div>
 
-      {/* -------------------------------------------------------- studio */}
-      <section className="studio page-frame" id="studio" aria-labelledby="studio-title">
-        <header className="section-head">
-          <p className="eyebrow">
-            <span className="eyebrow__index">01</span> The studio
-          </p>
-          <h2 className="section-head__title" id="studio-title">
-            The details behind <em className="serif-em">every</em> decision.
-          </h2>
-          <p className="section-head__lede">
-            Serious tools arranged the way chess is actually learned: look closer, find the
-            lesson, then come back stronger.
-          </p>
-        </header>
-
-        <div className="bento">
-          <article className="bento__card bento__card--wide" id="analysis">
-            <div className="bento__card-head">
-              <span className="bento__index">01 — Engine</span>
-              <span className="bento__tag">Stockfish 19</span>
-            </div>
-            <div className="bento__copy">
-              <h3>See the whole position</h3>
-              <p>
-                Explore variations with a local Stockfish build, follow the evaluation, and
-                understand why one move changes everything.
+      {/* ---------------------------------------------------- modes */}
+      <section className="section modes">
+        <div className="wrap">
+          <header className="section-head">
+            <div>
+              <p className="eyebrow">
+                <span className="eyebrow__num">02</span> What you get
               </p>
+              <h2 className="display-md">
+                Three ways to
+                <br />
+                <span className="serif">play the long game.</span>
+              </h2>
             </div>
-            <div className="eval-panel" aria-hidden="true">
-              <div className="eval-panel__bar">
-                <i style={{ width: "58%" }} />
-                <span className="eval-panel__midpoint" />
-              </div>
-              <div className="eval-panel__row">
-                <span className="eval-panel__score">+0.42</span>
-                <span className="eval-panel__moves">
-                  <span><b>12.</b> Bd2 <em>+0.42</em></span>
-                  <span><b>12.</b> Nxd5 <em>+1.10</em></span>
-                  <span><b>12.</b> a4 <em>+0.18</em></span>
-                </span>
-              </div>
-            </div>
-          </article>
-
-          <article className="bento__card">
-            <div className="bento__card-head">
-              <span className="bento__index">02 — Review</span>
-            </div>
-            <div className="bento__copy">
-              <h3>Review with perspective</h3>
-              <p>A phase-by-phase account of your game, with critical moments ready to revisit.</p>
-            </div>
-            <div className="review-strip" aria-hidden="true">
-              <span className="review-strip__label">ACCURACY</span>
-              <div className="review-strip__track">
-                <i style={{ width: "82%" }} className="is-accent" />
-                <i style={{ width: "68%" }} className="is-dim" />
-              </div>
-              <div className="review-strip__legend">
-                <span>You 82%</span>
-                <span>Ratio 68%</span>
-              </div>
-            </div>
-          </article>
-
-          <article className="bento__card">
-            <div className="bento__card-head">
-              <span className="bento__index">03 — Repertoire</span>
-            </div>
-            <div className="bento__copy">
-              <h3>Build a repertoire that sticks</h3>
-              <p>Shape opening lines around the positions you actually reach, then practice them.</p>
-            </div>
-            <ul className="repertoire" aria-hidden="true">
-              <li>
-                <span className="repertoire__line">1. e4 c5</span>
-                <span className="repertoire__state">12 positions</span>
-              </li>
-              <li>
-                <span className="repertoire__line">2. Nf3 d6</span>
-                <span className="repertoire__state is-learned">learned</span>
-              </li>
-              <li>
-                <span className="repertoire__line">3. d4 cxd4</span>
-                <span className="repertoire__state">review</span>
-              </li>
-            </ul>
-          </article>
-
-          <article className="bento__card bento__card--piece">
-            <div className="bento__card-head">
-              <span className="bento__index">04 — Coach</span>
-              <span className="bento__tag">On device</span>
-            </div>
-            <div className="bento__copy">
-              <h3>Know what to work on next</h3>
-              <p>Turn reviewed games into a longer view of your habits and recurring errors.</p>
-            </div>
-            <div className="bento__art" aria-hidden="true">
-              <Piece kind="pawn" tone="emerald" className="piece" />
-              <Piece kind="bishop" tone="obsidian" className="piece" />
-              <Piece kind="rook" tone="ivory" className="piece" />
-            </div>
-          </article>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------- privacy */}
-      <section className="privacy page-frame" id="privacy" aria-labelledby="privacy-title">
-        <div className="privacy__panel">
-          <div className="privacy__copy">
-            <p className="eyebrow">
-              <span className="eyebrow__dot" /> Quietly powerful by design
+            <p className="section-head__lede">
+              Everything in ChessLab is arranged around a single loop: play a game, understand
+              it, then come back stronger. No feeds, no streaks, no noise.
             </p>
-            <h2 id="privacy-title">
-              Your games.
-              <br />
-              <em className="serif-em">Your space.</em>
-            </h2>
-            <p className="privacy__lede">
-              Analysis belongs close to the board. ChessLab is built to run locally, so your
-              games, study notes, and progress stay on your computer.
-            </p>
-            <div className="privacy__points">
-              <span>No cloud account</span>
-              <span>No subscription</span>
-              <span>No games sent away</span>
-            </div>
-          </div>
+          </header>
 
-          <div className="flow" aria-label="A local analysis flow: your device, the Stockfish engine, and your insight">
-            <div className="flow__top">
-              <span>LOCAL BY DESIGN</span>
-              <span className="flow__signal">
-                <i /> ON DEVICE
-              </span>
-            </div>
-            <div className="flow__chain">
-              <div className="flow__node">
-                <span className="flow__icon">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <rect x="4" y="3" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M8 21h8M12 16v5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <div className="modes__grid">
+            {MODES.map((mode) => (
+              <Link className="mode" href={mode.href} key={mode.num}>
+                <div className="mode__head">
+                  <span>{mode.num}</span>
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M4 16 16 4M6.5 4H16v9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </span>
-                <small>01</small>
-                <strong>Your device</strong>
-              </div>
-              <span className="flow__link" aria-hidden="true">
-                <i />
-              </span>
-              <div className="flow__node">
-                <span className="flow__icon flow__icon--accent">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                    <circle cx="12" cy="12" r="4.6" stroke="currentColor" strokeWidth="1.4" />
-                    <circle cx="12" cy="12" r="1.1" fill="currentColor" />
-                  </svg>
-                </span>
-                <small>02</small>
-                <strong>Stockfish 19</strong>
-              </div>
-              <span className="flow__link" aria-hidden="true">
-                <i />
-              </span>
-              <div className="flow__node">
-                <span className="flow__icon">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M4 19V5M4 19h16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-                    <path d="m7 15 4-4 3 2 5-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                <small>03</small>
-                <strong>Your insight</strong>
-              </div>
-            </div>
-            <p className="flow__foot">A thoughtful loop between play, analysis, and improvement.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* --------------------------------------------------------- pieces */}
-      <section className="showcase" aria-label="The ChessLab piece set">
-        <div className="showcase__inner page-frame">
-          <div className="showcase__head">
-            <p className="eyebrow">
-              <span className="eyebrow__index">02</span> The set
-            </p>
-            <h2>
-              Six pieces,
-              <br />
-              drawn by hand.
-            </h2>
-          </div>
-          <div className="showcase__pieces" aria-hidden="true">
-            {(["pawn", "rook", "knight", "bishop", "queen", "king"] as const).map((kind, index) => (
-              <div className={`showcase__piece showcase__piece--${kind}`} key={kind} style={{ ["--i" as string]: index }}>
-                <Piece kind={kind} tone={index === 4 ? "emerald" : index % 2 === 0 ? "ivory" : "obsidian"} className="piece" />
-                <span>{kind}</span>
-              </div>
+                </div>
+                <div className="mode__art">
+                  <PieceArt kind={mode.piece} material={mode.num === "02" ? "ivory" : "obsidian"} />
+                </div>
+                <h3 className="display-sm">{mode.title}</h3>
+                <p>{mode.copy}</p>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------------- release */}
-      <section className="release page-frame" aria-labelledby="release-title">
-        <div className="release__copy">
-          <p className="eyebrow">
-            <span className="eyebrow__index">03</span> The next move
-          </p>
-          <h2 className="section-head__title" id="release-title">
-            In development. <em className="serif-em">Made with intention.</em>
-          </h2>
-          <p className="section-head__lede">
-            The public desktop release is still being built. Follow the roadmap for progress,
-            platform plans, and a clear note when downloads are ready.
-          </p>
+      {/* ----------------------------------------------------- stats */}
+      <section className="section section--tight stats">
+        <div className="wrap">
+          <div className="stats__grid">
+            {STATS.map((stat) => (
+              <div className="stat" key={stat.label}>
+                <span className="display-lg stat__value">{stat.value}</span>
+                <p>{stat.label}</p>
+              </div>
+            ))}
+            <div className="stat stat--cta">
+              <p>Ready to see your own games differently?</p>
+              <Link className="btn-pill btn-pill--ember" href="/download">
+                Get the beta
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="release__actions">
-          <Link className="btn btn--solid" href="/roadmap">
-            Follow the roadmap
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
-          <Link className="link-arrow" href="/download">
-            View planned platforms
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+      </section>
+
+      {/* --------------------------------------------------- thesis */}
+      <section className="section thesis">
+        <div className="wrap">
+          <div className="thesis__grid">
+            <div className="thesis__art" aria-hidden="true">
+              <span className="thesis__halo" />
+              <div className="thesis__piece thesis__piece--a">
+                <PieceArt kind="queen" material="ivory" glow />
+              </div>
+              <div className="thesis__piece thesis__piece--b">
+                <PieceArt kind="knight" material="obsidian" />
+              </div>
+            </div>
+
+            <div className="thesis__copy">
+              <span className="chip">
+                <i /> Quietly powerful by design
+              </span>
+              <h2 className="display-md">
+                Chess that respects
+                <br />
+                <span className="serif">your attention.</span>
+              </h2>
+              <p>
+                Analysis belongs close to the board. ChessLab runs on your desktop, keeps your
+                games in a local database, and never asks you to sign in to understand your own
+                chess.
+              </p>
+              <ul className="thesis__points">
+                <li>
+                  <b>No cloud account</b>
+                  <span>Your library lives in a local SQLite file you own.</span>
+                </li>
+                <li>
+                  <b>No telemetry</b>
+                  <span>Nothing leaves the machine unless you export it.</span>
+                </li>
+                <li>
+                  <b>No subscription</b>
+                  <span>One app, one engine, no recurring plans.</span>
+                </li>
+              </ul>
+              <Link className="btn-pill btn-pill--outline" href="/studio">
+                Explore the studio
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

@@ -14,14 +14,14 @@ export default function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          padding: "64px",
+          padding: "60px 64px",
           background:
-            "radial-gradient(circle at 78% 18%, rgba(47,224,160,0.24), transparent 46%), radial-gradient(circle at 12% 92%, rgba(13,157,110,0.18), transparent 52%), #000000",
-          color: "#f4f7f5",
+            "radial-gradient(circle at 72% 22%, rgba(255,91,46,0.30), transparent 48%), radial-gradient(circle at 6% 96%, rgba(255,91,46,0.14), transparent 54%), #000000",
+          color: "#f5f3ef",
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div
             style={{
               width: 44,
@@ -29,44 +29,74 @@ export default function OpengraphImage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "1px solid rgba(47,224,160,0.45)",
-              borderRadius: 14,
-              background: "rgba(47,224,160,0.12)",
+              border: "1px solid rgba(255,91,46,0.4)",
+              borderRadius: 12,
+              background: "rgba(255,91,46,0.12)",
             }}
           >
             <svg width="26" height="26" viewBox="0 0 48 48" fill="none">
-              <path d="M13.5 34.5V22.5H31V13" stroke="#2fe0a0" strokeWidth="4" strokeLinecap="square" />
-              <circle cx="13.5" cy="34.5" r="3.4" fill="#2fe0a0" />
-              <path d="M25.4 11.6 34.4 13.2 31 21.6Z" fill="#d6fff0" />
+              <g fill="#ff5b2e">
+                <path d="M24 11c-4.4 0-8 3.4-8 7.6 0 2.7 1.5 5.1 3.8 6.4l-1.7 3.2h11.8l-1.7-3.2c2.3-1.3 3.8-3.7 3.8-6.4C32 14.4 28.4 11 24 11Z" />
+                <path d="M17.4 30.2h13.2l.9 2.6H16.5z" />
+                <path d="M15.8 34.4h16.4c1.1 0 1.9.9 1.9 2v1.2c0 1.1-.8 2-1.9 2H15.8c-1.1 0-1.9-.9-1.9-2v-1.2c0-1.1.8-2 1.9-2Z" />
+              </g>
             </svg>
           </div>
-          <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: -0.6 }}>
+          <div style={{ display: "flex", fontSize: 25, fontWeight: 600, letterSpacing: -0.5 }}>
             ChessLab
           </div>
           <div
             style={{
               display: "flex",
-              marginLeft: 8,
-              padding: "6px 12px",
+              marginLeft: 6,
+              padding: "5px 11px",
               border: "1px solid rgba(255,255,255,0.16)",
               borderRadius: 999,
-              fontSize: 13,
+              fontSize: 12,
               letterSpacing: 2,
-              color: "#9aa5a0",
+              color: "#a7a29a",
             }}
           >
             OFFLINE STUDIO
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", fontSize: 96, fontWeight: 700, letterSpacing: -4, lineHeight: 0.96 }}>
-            Think one move
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 132,
+              fontWeight: 700,
+              letterSpacing: -6,
+              lineHeight: 0.86,
+              textTransform: "uppercase",
+            }}
+          >
+            Master
           </div>
-          <div style={{ display: "flex", fontSize: 96, letterSpacing: -3, lineHeight: 0.96, color: "#2fe0a0", fontStyle: "italic" }}>
-            ahead.
+          <div
+            style={{
+              display: "flex",
+              fontSize: 132,
+              fontWeight: 400,
+              letterSpacing: -5,
+              lineHeight: 0.86,
+              color: "#ff5b2e",
+              textTransform: "uppercase",
+            }}
+          >
+            Chess
           </div>
-          <div style={{ display: "flex", marginTop: 8, maxWidth: 720, fontSize: 24, lineHeight: 1.45, color: "#9aa5a0" }}>
+          <div
+            style={{
+              display: "flex",
+              marginTop: 18,
+              maxWidth: 700,
+              fontSize: 23,
+              lineHeight: 1.45,
+              color: "#a7a29a",
+            }}
+          >
             Analysis, review, and repertoire — on your own machine. Powered by Stockfish 19.
           </div>
         </div>
@@ -77,10 +107,10 @@ export default function OpengraphImage() {
             alignItems: "center",
             justifyContent: "space-between",
             borderTop: "1px solid rgba(255,255,255,0.12)",
-            paddingTop: 22,
-            fontSize: 15,
+            paddingTop: 20,
+            fontSize: 13,
             letterSpacing: 2.6,
-            color: "#6c756f",
+            color: "#6f6b64",
           }}
         >
           <span>LOCAL-FIRST</span>
