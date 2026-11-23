@@ -2028,9 +2028,13 @@ body[data-menu-open="true"] {
   }
 
   .hero__figure {
-    top: 10px;
-    right: -4%;
-    width: clamp(104px, 15vw, 148px);
+    top: 4px;
+    right: 2%;
+    width: clamp(96px, 11vw, 124px);
+  }
+
+  .hero__figure-label {
+    display: none;
   }
 
   .hero__figure-label {
