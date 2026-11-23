@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "../../public/fonts/geist-latin.woff2",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "../../public/fonts/geist-mono-latin.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,10 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark`}>
       <body className="min-h-screen bg-[#090b0f] text-slate-100 antialiased chess-grid-bg">
         <SiteNav />
-        <main className="mx-auto max-w-6xl px-6 py-14">{children}</main>
-        <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-400">
-          ChessLab Desktop — Public Release Coming Soon
-        </footer>
+        <main className="animate-page-enter px-6 py-8 sm:px-8 sm:py-10">{children}</main>
       </body>
     </html>
   );

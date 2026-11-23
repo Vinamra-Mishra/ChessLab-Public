@@ -13,10 +13,10 @@ export function SiteNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#090b0f]/80 backdrop-blur-md">
+    <header className="site-header sticky top-0 z-40 border-b border-white/10 bg-[#080a09]/75 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3 text-white">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-500/15 text-emerald-400">
+          <span className="brand-mark flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-500/15 text-emerald-400">
             <svg
               width="20"
               height="20"
