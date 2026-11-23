@@ -5,55 +5,53 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { href: "/", label: "Overview" },
+  { href: "/#studio", label: "Studio" },
   { href: "/download", label: "Download" },
   { href: "/roadmap", label: "Roadmap" },
 ];
+
+function BrandMark() {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <rect width="40" height="40" rx="13" fill="currentColor" />
+      <path d="M23.9 9.2c-2.9 0-4.7 1.7-4.7 4.6 0 1.1.4 2.2 1.3 3.1l-2.2 3.7h9.4l-1.8-3.8c1.3-.9 2-2.3 2-3.8 0-2.2-1.6-3.8-4-3.8Z" fill="#F3F2EC" />
+      <path d="M17.1 20.6h11.5l1.2 3.2H15.8l1.3-3.2ZM14.8 25.7h17.1l1.1 3.2H13.6l1.2-3.2Z" fill="#D8C69E" />
+      <circle cx="23.3" cy="13.2" r=".8" fill="#213B2D" />
+    </svg>
+  );
+}
 
 export function SiteNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#090b0f]/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-3 text-white">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-500/15 text-emerald-400">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M12 3l2.5 4.5L19 6l-2 7H7L5 6l4.5 1.5L12 3z" />
-              <path d="M6 17h12" />
-              <path d="M5 20h14" />
-            </svg>
-          </span>
-          <span className="text-lg font-semibold tracking-tight">ChessLab</span>
+    <header className="site-header">
+      <div className="site-header__inner page-frame">
+        <Link href="/" className="brand" aria-label="ChessLab home">
+          <span className="brand__mark"><BrandMark /></span>
+          <span className="brand__name">Chess<span>Lab</span></span>
         </Link>
 
-        <nav className="flex items-center gap-2" aria-label="Primary">
+        <nav className="site-nav" aria-label="Primary navigation">
           {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
+            const basePath = item.href.split("#")[0];
+            const active = item.href === "/#studio"
+              ? false
+              : pathname === basePath;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white border border-transparent"
-                }`}
+                className={`site-nav__link${active ? " is-active" : ""}`}
+                aria-current={active ? "page" : undefined}
               >
                 {item.label}
               </Link>
             );
           })}
         </nav>
+
+        <div className="site-header__status"><span /> Public beta in development</div>
       </div>
     </header>
   );
