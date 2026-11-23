@@ -1,72 +1,71 @@
+import Link from "next/link";
+
 const MILESTONES = [
   {
-    phase: "Phase 1",
-    title: "Core Desktop Engine & Review",
-    status: "Completed in Dev",
+    phase: "01 · The foundation",
+    title: "A thoughtful desktop home",
+    status: "In development",
+    current: true,
     items: [
-      "Tauri v2 + Rust SQLite persistence",
-      "MultiPV=2 Stockfish 19 game review",
-      "11-tier move classification & Expected Points",
+      "Tauri v2 desktop app with local SQLite storage",
+      "Offline-first foundations and a private-by-default approach",
+      "Engine integration and position exploration",
     ],
   },
   {
-    phase: "Phase 2",
-    title: "Openings, Puzzles & AI Coach",
-    status: "Completed in Dev",
+    phase: "02 · The study loop",
+    title: "Turn games into progress",
+    status: "In development",
+    current: false,
     items: [
-      "SM-2 spaced-repetition repertoire trainer",
-      "Mistake-extracted tactical puzzle bank",
-      "Longitudinal weakness & error-risk modeling",
+      "Game review with phase-by-phase feedback",
+      "Opening repertoire and spaced-repetition practice",
+      "Longitudinal insights into recurring patterns",
     ],
   },
   {
-    phase: "Phase 3",
-    title: "Public Release & Installers",
-    status: "Coming Soon",
+    phase: "03 · Public beta",
+    title: "From the lab to your desktop",
+    status: "Coming soon",
+    current: false,
     items: [
-      "Signed Windows, macOS, and Linux builds",
-      "Automated GitHub Releases & checksums",
-      "Public beta feedback & telemetry-free updates",
+      "Verified Windows, macOS, and Linux installers",
+      "Signed builds and published checksums",
+      "Release notes and an open feedback loop",
     ],
   },
 ];
 
 export default function RoadmapPage() {
   return (
-    <div className="space-y-10">
-      <div className="space-y-3">
-        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          Release Roadmap
-        </h1>
-        <p className="max-w-2xl text-slate-300">
-          Tracking the path from local development to the first public ChessLab desktop release.
+    <div className="subpage page-frame">
+      <div className="subpage-heading">
+        <p className="eyebrow"><span className="eyebrow__dot" /> ChessLab · Release roadmap</p>
+        <h1 className="subpage-title">Thoughtful work.<br /><em>Real progress.</em></h1>
+        <p className="subpage-lede">
+          ChessLab is currently in development. Here’s the shape of the work — from the private,
+          local-first foundation to a public beta you can install with confidence.
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="roadmap-list">
         {MILESTONES.map((milestone) => (
-          <div key={milestone.phase} className="tactile-card rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono uppercase tracking-wider text-emerald-400">
-                {milestone.phase}
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-slate-300">
-                {milestone.status}
-              </span>
+          <article className={`roadmap-card${milestone.current ? " roadmap-card--current" : ""}`} key={milestone.phase}>
+            <div className="roadmap-card__top">
+              <span className="roadmap-card__phase">{milestone.phase}</span>
+              <span className="roadmap-card__status">{milestone.status}</span>
             </div>
-            <h2 className="text-lg font-semibold text-white">{milestone.title}</h2>
-            <ul className="space-y-2 text-sm text-slate-300">
-              {milestone.items.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <svg className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  <span>{item}</span>
-                </li>
-              ))}
+            <h2 className="roadmap-card__title">{milestone.title}</h2>
+            <ul className="roadmap-card__items">
+              {milestone.items.map((item) => <li key={item}>{item}</li>)}
             </ul>
-          </div>
+          </article>
         ))}
+      </div>
+
+      <div className="roadmap-bottom">
+        <p>There’s no public installer yet. We’ll update the download page as soon as the beta is ready.</p>
+        <Link href="/download" className="text-link">See planned platforms <span aria-hidden="true">→</span></Link>
       </div>
     </div>
   );
