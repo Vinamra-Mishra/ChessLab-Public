@@ -18,11 +18,11 @@ export const HERO_3D_TUNING = {
     queen: ["#c9825f", "#ff7eb6", "#ff6b2c", "#ffd7ba", "#a35238"] as const,
   },
   DISTORTION: {
-    baseDistortion: 0.5,
-    distortionScale: 0.4,
-    temporalDistortion: 0.12,
-    speedBoostFactor: 0.45,
-    wetNormalAmplitude: 0.06,
+    baseDistortion: 0,
+    distortionScale: 0,
+    temporalDistortion: 0,
+    speedBoostFactor: 0,
+    wetNormalAmplitude: 0,
   },
   BOARD_GLOW: {
     gridColor: "#ffd4c2",
@@ -168,51 +168,6 @@ function createMarbledSwirlTextures(paletteHex: readonly string[]): {
   return { colorMap, iridescenceMap };
 }
 
-function createWetNormalMap(): THREE.CanvasTexture {
-  const size = 128;
-  const tau = Math.PI * 2;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d")!;
-  const img = ctx.createImageData(size, size);
-
-  const hAt = (u: number, v: number) =>
-    Math.sin(u * tau * 3 + Math.cos(v * tau * 2)) * 0.5 +
-    Math.cos(v * tau * 4 - Math.sin(u * tau * 3)) * 0.35;
-
-  const eps = 1 / size;
-  for (let py = 0; py < size; py++) {
-    const v = py / size;
-    for (let px = 0; px < size; px++) {
-      const u = px / size;
-      const hx = hAt(u + eps, v) - hAt(u - eps, v);
-      const hy = hAt(u, v + eps) - hAt(u, v - eps);
-      let nx = -hx * 2.0;
-      let ny = -hy * 2.0;
-      let nz = 1.0;
-      const len = Math.hypot(nx, ny, nz) || 1;
-      nx /= len;
-      ny /= len;
-      nz /= len;
-
-      const idx = (py * size + px) * 4;
-      img.data[idx] = Math.round((nx * 0.5 + 0.5) * 255);
-      img.data[idx + 1] = Math.round((ny * 0.5 + 0.5) * 255);
-      img.data[idx + 2] = Math.round((nz * 0.5 + 0.5) * 255);
-      img.data[idx + 3] = 255;
-    }
-  }
-  ctx.putImageData(img, 0, 0);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 2);
-  tex.colorSpace = THREE.NoColorSpace;
-  tex.needsUpdate = true;
-  return tex;
-}
-
 function applyCylindricalUVs(geo: THREE.BufferGeometry): void {
   const pos = geo.getAttribute("position");
   if (!pos) return;
@@ -308,39 +263,27 @@ export function ChessPieceGLB({
     };
   }, [scene]);
 
-  const { colorMap, iridescenceMap, wetNormalMap } = useMemo(() => {
-    const swirl = createMarbledSwirlTextures(
+  const { colorMap, iridescenceMap } = useMemo(() => {
+    return createMarbledSwirlTextures(
       isKingGlass ? HERO_3D_TUNING.SWIRL_PALETTE.king : HERO_3D_TUNING.SWIRL_PALETTE.queen
     );
-    const normal = createWetNormalMap();
-    return { ...swirl, wetNormalMap: normal };
   }, [isKingGlass]);
 
-  const wetNormalRef = useRef<THREE.CanvasTexture | null>(null);
-
   useEffect(() => {
-    wetNormalRef.current = wetNormalMap;
     return () => {
-      wetNormalRef.current = null;
       geometry.dispose();
       colorMap.dispose();
       iridescenceMap.dispose();
-      wetNormalMap.dispose();
     };
-  }, [geometry, colorMap, iridescenceMap, wetNormalMap]);
+  }, [geometry, colorMap, iridescenceMap]);
 
   useFrame(({ clock }) => {
     if (reducedMotion || !outerGroupRef.current) return;
 
     const t = clock.getElapsedTime();
-    if (wetNormalRef.current) {
-      wetNormalRef.current.offset.y = (t * 0.035) % 1;
-      wetNormalRef.current.offset.x = Math.sin(t * 0.2) * 0.015;
-    }
 
     let targetRx = rotation[0];
     let targetRy = rotation[1];
-    let speed = 0;
 
     if (isTouch) {
       targetRy = rotation[1] + Math.sin(t * 0.35) * 0.08;
@@ -349,26 +292,11 @@ export function ChessPieceGLB({
       const p = pointerRef.current;
       targetRy = rotation[1] + p.x * HERO_3D_TUNING.PARALLAX_STRENGTH.pieceMaxYawRad;
       targetRx = rotation[0] + p.y * HERO_3D_TUNING.PARALLAX_STRENGTH.pieceMaxPitchRad;
-      speed = p.speed;
     }
 
     outerGroupRef.current.rotation.y += (targetRy - outerGroupRef.current.rotation.y) * rotDamping;
     outerGroupRef.current.rotation.x += (targetRx - outerGroupRef.current.rotation.x) * rotDamping;
-
-    if (isKingGlass && transMatRef.current) {
-      const targetDistort =
-        HERO_3D_TUNING.DISTORTION.baseDistortion + speed * HERO_3D_TUNING.DISTORTION.speedBoostFactor;
-      const targetTemp =
-        HERO_3D_TUNING.DISTORTION.temporalDistortion + speed * 0.22;
-      transMatRef.current.distortion += (targetDistort - transMatRef.current.distortion) * 0.08;
-      transMatRef.current.temporalDistortion +=
-        (targetTemp - transMatRef.current.temporalDistortion) * 0.08;
-    }
   });
-
-  const normAmp = HERO_3D_TUNING.DISTORTION.wetNormalAmplitude;
-  const normalScaleVec = useMemo(() => new THREE.Vector2(normAmp, normAmp), [normAmp]);
-  const copperNormalVec = useMemo(() => new THREE.Vector2(0.05, 0.05), []);
 
   return (
     <group ref={outerGroupRef} position={position} rotation={rotation} scale={scale}>
@@ -397,8 +325,6 @@ export function ChessPieceGLB({
                 clearcoat={1}
                 clearcoatRoughness={0.03}
                 map={colorMap}
-                normalMap={wetNormalMap}
-                normalScale={normalScaleVec}
                 envMapIntensity={1.5}
               />
             ) : (
@@ -416,8 +342,6 @@ export function ChessPieceGLB({
                 iridescenceThicknessRange={[180, 760]}
                 iridescenceThicknessMap={iridescenceMap}
                 map={colorMap}
-                normalMap={wetNormalMap}
-                normalScale={copperNormalVec}
                 envMapIntensity={1.5}
               />
             )}

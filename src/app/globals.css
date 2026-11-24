@@ -3910,3 +3910,26 @@ img {
 .hero--image-a .stroke-type:hover {
   -webkit-text-stroke-color: rgba(255, 255, 255, 0.85);
 }
+
+/* Improved small text sizing & contrast across hero and lower sections */
+.eyebrow,
+.hero__spec,
+.hero__foot,
+.hero__card-top,
+.hero__card-k,
+.mode__head span,
+.stat__label {
+  font-size: max(12px, 0.75rem);
+  letter-spacing: 0.14em;
+  color: rgba(245, 243, 239, 0.76);
+}
+
+.hero--image-a .hero__lede,
+.section-head__lede,
+.mode p {
+  color: rgba(245, 243, 239, 0.78);
+}
+
+.hero--image-a .hero__foot {
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+}

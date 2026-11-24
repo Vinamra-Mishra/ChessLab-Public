@@ -50,7 +50,7 @@ function createGridGlowTexture(): THREE.CanvasTexture {
   const ctx = canvas.getContext("2d")!;
 
   ctx.clearRect(0, 0, size, size);
-  const cells = 8;
+  const cells = 12;
   const step = size / cells;
 
   // Soft edge-fading radial mask via gradient stroke
@@ -110,38 +110,38 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
   }, [gridTex, poolTex]);
 
   return (
-    <group position={[0.85, 0, 0]}>
+    <group position={[0.5, 0, -0.4]}>
       {/* Dark beveled metallic slab */}
       <mesh position={[0, -0.14, 0]} receiveShadow>
-        <boxGeometry args={[5.2, 0.24, 5.2]} />
+        <boxGeometry args={[10.4, 0.24, 10.4]} />
         <meshStandardMaterial color="#09090c" metalness={0.65} roughness={0.35} />
       </mesh>
       <mesh position={[0, -0.02, 0]} receiveShadow>
-        <boxGeometry args={[4.95, 0.04, 4.95]} />
+        <boxGeometry args={[10.0, 0.04, 10.0]} />
         <meshStandardMaterial color="#18181f" metalness={0.5} roughness={0.28} />
       </mesh>
 
       {/* Reflective top surface */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]} receiveShadow>
-        <planeGeometry args={[4.85, 4.85]} />
+        <planeGeometry args={[9.9, 9.9]} />
         <MeshReflectorMaterial
           mirror={0.45}
           blur={[300, 100]}
           resolution={isMobile ? 256 : 512}
           mixBlur={1}
           mixStrength={0.85}
-          roughness={0.34}
+          roughness={0.32}
           depthScale={1}
           minDepthThreshold={0.4}
           maxDepthThreshold={1.4}
-          color="#0d0d12"
+          color="#0c0c11"
           metalness={0.18}
         />
       </mesh>
 
       {/* Glowing grid lines */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 0]}>
-        <planeGeometry args={[4.8, 4.8]} />
+        <planeGeometry args={[9.8, 9.8]} />
         <meshBasicMaterial
           map={gridTex}
           transparent
@@ -152,8 +152,8 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
       </mesh>
 
       {/* Soft orange glow pool on board */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-0.1, 0.004, 0]}>
-        <planeGeometry args={[3.8, 3.8]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.1, 0.004, 0.2]}>
+        <planeGeometry args={[5.4, 5.4]} />
         <meshBasicMaterial
           map={poolTex}
           transparent
@@ -346,7 +346,7 @@ export function HeroScene3D() {
         />
 
         <GeometriaBoard isMobile={envFlags.isMobile} />
-        <ContactShadows position={[0.85, 0.004, 0]} opacity={0.62} scale={7} blur={2.4} far={3.5} />
+        <ContactShadows position={[0.5, 0.004, -0.4]} opacity={0.62} scale={11} blur={2.4} far={3.5} />
 
         <Suspense fallback={null}>
           <ChessPieceGLB
