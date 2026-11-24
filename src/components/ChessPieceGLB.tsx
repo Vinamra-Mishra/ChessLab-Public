@@ -49,7 +49,7 @@ export interface PointerState {
   speed: number;
 }
 
-const MODEL_PATHS: Record<PieceKind, string> = {
+export const MODEL_PATHS: Record<PieceKind, string> = {
   king: "/models/ChessPieceKing.glb",
   queen: "/models/ChessPieceQueen.glb",
   bishop: "/models/ChessPieceBishop.glb",
@@ -74,8 +74,15 @@ interface SwirlTexturePair {
   iridescenceMap: THREE.CanvasTexture;
 }
 
+interface WoodTextureSet {
+  colorMap: THREE.CanvasTexture;
+  bumpMap: THREE.CanvasTexture;
+  roughnessMap: THREE.CanvasTexture;
+}
+
 const GEOMETRY_CACHE = new Map<PieceKind, NormalizedGeoData>();
 const SWIRL_CACHE = new Map<string, SwirlTexturePair>();
+let WOOD_CACHE: WoodTextureSet | null = null;
 
 function hash2(x: number, y: number): number {
   const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
@@ -113,7 +120,7 @@ function hexToRgb(hex: string): [number, number, number] {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function getOrCreateSwirlTextures(cacheKey: string, paletteHex: readonly string[]): SwirlTexturePair {
+export function getOrCreateSwirlTextures(cacheKey: string, paletteHex: readonly string[]): SwirlTexturePair {
   const cached = SWIRL_CACHE.get(cacheKey);
   if (cached) return cached;
 
@@ -190,6 +197,97 @@ function getOrCreateSwirlTextures(cacheKey: string, paletteHex: readonly string[
   return pair;
 }
 
+function getOrCreateWoodTextures(): WoodTextureSet {
+  if (WOOD_CACHE) return WOOD_CACHE;
+
+  const size = 256;
+  const cCanvas = document.createElement("canvas");
+  cCanvas.width = size;
+  cCanvas.height = size;
+  const cCtx = cCanvas.getContext("2d")!;
+  const cImg = cCtx.createImageData(size, size);
+
+  const bCanvas = document.createElement("canvas");
+  bCanvas.width = size;
+  bCanvas.height = size;
+  const bCtx = bCanvas.getContext("2d")!;
+  const bImg = bCtx.createImageData(size, size);
+
+  const rCanvas = document.createElement("canvas");
+  rCanvas.width = size;
+  rCanvas.height = size;
+  const rCtx = rCanvas.getContext("2d")!;
+  const rImg = rCtx.createImageData(size, size);
+
+  // Subtle pale ash/maple wood grain in the chessboard off-white palette
+  const lightRgb: [number, number, number] = [234, 230, 222];
+  const grainRgb: [number, number, number] = [205, 198, 186];
+
+  for (let py = 0; py < size; py++) {
+    const v = py / size;
+    for (let px = 0; px < size; px++) {
+      const u = px / size;
+      const sx = Math.cos(u * Math.PI * 2) * 3.8 + 4.2;
+      const sz = Math.sin(u * Math.PI * 2) * 3.8 + 4.2;
+      const sy = v * 0.9;
+
+      const warp = fbm(sx, sz + sy * 1.15);
+      const rings = 0.5 + 0.5 * Math.sin((sx * 1.55 + sy * 0.7 + warp * 2.6) * Math.PI);
+      const fiber = fbm(sx * 4.4, sz * 4.4 + sy * 0.45);
+      const pore = fbm(sx * 9.0, sz * 9.0 + sy * 1.8);
+      const tone = Math.max(0, Math.min(1, rings * 0.62 + fiber * 0.28 + pore * 0.1));
+
+      const r = Math.round(grainRgb[0] + (lightRgb[0] - grainRgb[0]) * tone);
+      const g = Math.round(grainRgb[1] + (lightRgb[1] - grainRgb[1]) * tone);
+      const b = Math.round(grainRgb[2] + (lightRgb[2] - grainRgb[2]) * tone);
+
+      const p = (py * size + px) * 4;
+      cImg.data[p] = r;
+      cImg.data[p + 1] = g;
+      cImg.data[p + 2] = b;
+      cImg.data[p + 3] = 255;
+
+      const bumpVal = Math.round((0.35 + tone * 0.55) * 255);
+      bImg.data[p] = bumpVal;
+      bImg.data[p + 1] = bumpVal;
+      bImg.data[p + 2] = bumpVal;
+      bImg.data[p + 3] = 255;
+
+      // Subtle roughness contrast between smoother growth ridges and satin pores
+      const roughVal = Math.round((0.18 + (1 - tone) * 0.24) * 255);
+      rImg.data[p] = roughVal;
+      rImg.data[p + 1] = roughVal;
+      rImg.data[p + 2] = roughVal;
+      rImg.data[p + 3] = 255;
+    }
+  }
+
+  cCtx.putImageData(cImg, 0, 0);
+  bCtx.putImageData(bImg, 0, 0);
+  rCtx.putImageData(rImg, 0, 0);
+
+  const colorMap = new THREE.CanvasTexture(cCanvas);
+  colorMap.wrapS = THREE.RepeatWrapping;
+  colorMap.wrapT = THREE.RepeatWrapping;
+  colorMap.colorSpace = THREE.SRGBColorSpace;
+  colorMap.needsUpdate = true;
+
+  const bumpMap = new THREE.CanvasTexture(bCanvas);
+  bumpMap.wrapS = THREE.RepeatWrapping;
+  bumpMap.wrapT = THREE.RepeatWrapping;
+  bumpMap.colorSpace = THREE.NoColorSpace;
+  bumpMap.needsUpdate = true;
+
+  const roughnessMap = new THREE.CanvasTexture(rCanvas);
+  roughnessMap.wrapS = THREE.RepeatWrapping;
+  roughnessMap.wrapT = THREE.RepeatWrapping;
+  roughnessMap.colorSpace = THREE.NoColorSpace;
+  roughnessMap.needsUpdate = true;
+
+  WOOD_CACHE = { colorMap, bumpMap, roughnessMap };
+  return WOOD_CACHE;
+}
+
 function applyCylindricalUVs(geo: THREE.BufferGeometry): void {
   const pos = geo.getAttribute("position");
   if (!pos) return;
@@ -210,7 +308,7 @@ function applyCylindricalUVs(geo: THREE.BufferGeometry): void {
   geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
 }
 
-function getOrCreateNormalizedGeo(kind: PieceKind, scene: THREE.Object3D): NormalizedGeoData {
+export function getOrCreateNormalizedGeo(kind: PieceKind, scene: THREE.Object3D): NormalizedGeoData {
   const cached = GEOMETRY_CACHE.get(kind);
   if (cached) return cached;
 
@@ -269,8 +367,10 @@ export function ChessPieceGLB({
   rotation = [0, 0, 0],
   pointerRef,
   rotDamping = 0.06,
+  isMobile = false,
   isTouch = false,
   reducedMotion = false,
+  physicsDriven = false,
 }: {
   kind: PieceKind;
   variant: PieceVariant;
@@ -282,6 +382,7 @@ export function ChessPieceGLB({
   isMobile?: boolean;
   isTouch?: boolean;
   reducedMotion?: boolean;
+  physicsDriven?: boolean;
 }) {
   const { scene } = useGLTF(MODEL_PATHS[kind]);
   const outerGroupRef = useRef<THREE.Group>(null);
@@ -301,8 +402,13 @@ export function ChessPieceGLB({
     return getOrCreateSwirlTextures(key, palette);
   }, [isKingGlass, isCrimsonBlue]);
 
+  const woodTextures = useMemo(() => {
+    if (isKingGlass || isCrimsonBlue) return null;
+    return getOrCreateWoodTextures();
+  }, [isKingGlass, isCrimsonBlue]);
+
   useFrame(({ clock }) => {
-    if (reducedMotion || !outerGroupRef.current) return;
+    if (physicsDriven || reducedMotion || !outerGroupRef.current) return;
     if (!pointerRef && !isTouch) return;
 
     const t = clock.getElapsedTime();
@@ -339,13 +445,13 @@ export function ChessPieceGLB({
                 attenuationColor="#bae6fd"
                 attenuationDistance={2.8}
                 chromaticAberration={0.06}
-                anisotropicBlur={0.2}
+                anisotropicBlur={isMobile ? 0.08 : 0.2}
                 distortion={HERO_3D_TUNING.DISTORTION.baseDistortion}
                 distortionScale={HERO_3D_TUNING.DISTORTION.distortionScale}
                 temporalDistortion={HERO_3D_TUNING.DISTORTION.temporalDistortion}
-                backside
-                samples={4}
-                resolution={256}
+                backside={!isMobile}
+                samples={isMobile ? 2 : 4}
+                resolution={isMobile ? 128 : 256}
                 iridescence={1}
                 iridescenceIOR={1.6}
                 iridescenceThicknessRange={[100, 900]}
@@ -359,34 +465,36 @@ export function ChessPieceGLB({
               <meshPhysicalMaterial
                 color="#3b82f6"
                 emissive="#172554"
-                emissiveIntensity={0.42}
-                metalness={0.52}
-                roughness={0.11}
+                emissiveIntensity={0.34}
+                metalness={0.48}
+                roughness={0.14}
                 clearcoat={1}
-                clearcoatRoughness={0.04}
-                iridescence={0.55}
+                clearcoatRoughness={0.05}
+                iridescence={0.5}
                 iridescenceIOR={1.5}
                 iridescenceThicknessRange={[140, 620]}
                 iridescenceThicknessMap={iridescenceMap}
                 map={colorMap}
-                envMapIntensity={2.6}
+                envMapIntensity={2.35}
               />
             ) : (
               <meshPhysicalMaterial
-                color="#d8d4cc"
-                metalness={0.22}
-                roughness={0.08}
-                clearcoat={1}
-                clearcoatRoughness={0.04}
-                transmission={0.28}
-                thickness={1.2}
+                color="#ebe7de"
+                map={woodTextures?.colorMap ?? colorMap}
+                bumpMap={woodTextures?.bumpMap}
+                bumpScale={0.015}
+                roughnessMap={woodTextures?.roughnessMap}
+                metalness={0.1}
+                roughness={0.22}
+                clearcoat={0.78}
+                clearcoatRoughness={0.12}
+                transmission={0.12}
+                thickness={0.9}
                 ior={1.48}
-                iridescence={0.65}
+                iridescence={0.28}
                 iridescenceIOR={1.5}
-                iridescenceThicknessRange={[180, 760]}
-                iridescenceThicknessMap={iridescenceMap}
-                map={colorMap}
-                envMapIntensity={1.6}
+                iridescenceThicknessRange={[180, 620]}
+                envMapIntensity={1.45}
               />
             )}
           </mesh>

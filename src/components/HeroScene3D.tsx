@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import { ChessPieceGLB, HERO_3D_TUNING, type PointerState } from "./ChessPieceGLB";
@@ -43,19 +43,19 @@ function createRefractionBackdropTexture(): THREE.CanvasTexture {
 }
 
 function createGridGlowTexture(): THREE.CanvasTexture {
-  const size = 512;
+  const size = 1024;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d")!;
 
   ctx.clearRect(0, 0, size, size);
-  const cells = 12;
+  const cells = 20;
   const step = size / cells;
 
   // Soft edge-fading radial mask via gradient stroke
-  ctx.lineWidth = 2.2;
-  const grad = ctx.createRadialGradient(size / 2, size / 2, size * 0.08, size / 2, size / 2, size * 0.5);
+  ctx.lineWidth = 2.4;
+  const grad = ctx.createRadialGradient(size / 2, size / 2, size * 0.08, size / 2, size / 2, size * 0.48);
   grad.addColorStop(0, HERO_3D_TUNING.BOARD_GLOW.gridColor);
   grad.addColorStop(0.55, HERO_3D_TUNING.BOARD_GLOW.gridTint);
   grad.addColorStop(1, "rgba(0, 0, 0, 0)");
@@ -102,8 +102,8 @@ function createBoardSurfaceTextures(): {
   map: THREE.CanvasTexture;
   roughnessMap: THREE.CanvasTexture;
 } {
-  const size = 512;
-  const cells = 12;
+  const size = 1024;
+  const cells = 20;
   const step = size / cells;
 
   const cCanvas = document.createElement("canvas");
@@ -137,7 +137,7 @@ function createBoardSurfaceTextures(): {
   return { map, roughnessMap };
 }
 
-function GeometriaBoard() {
+function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
   const gridTex = useMemo(() => createGridGlowTexture(), []);
   const poolTex = useMemo(() => createOrangePoolTexture(), []);
   const boardTex = useMemo(() => createBoardSurfaceTextures(), []);
@@ -152,26 +152,26 @@ function GeometriaBoard() {
   }, [gridTex, poolTex, boardTex]);
 
   return (
-    <group position={[0.75, 0, -0.35]}>
-      {/* Dark beveled metallic slab */}
+    <group position={[0.55, 0, -0.35]}>
+      {/* Dark beveled metallic slab sized to span ultrawide to portrait canvases */}
       <mesh position={[0, -0.14, 0]} receiveShadow>
-        <boxGeometry args={[10.4, 0.24, 10.4]} />
+        <boxGeometry args={[20.4, 0.24, 20.4]} />
         <meshStandardMaterial color="#09090c" metalness={0.65} roughness={0.35} />
       </mesh>
       <mesh position={[0, -0.02, 0]} receiveShadow>
-        <boxGeometry args={[10.0, 0.04, 10.0]} />
+        <boxGeometry args={[20.0, 0.04, 20.0]} />
         <meshStandardMaterial color="#18181f" metalness={0.5} roughness={0.28} />
       </mesh>
 
       {/* Reflective top surface */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]} receiveShadow>
-        <planeGeometry args={[9.9, 9.9]} />
+        <planeGeometry args={[19.8, 19.8]} />
         <MeshReflectorMaterial
           map={boardTex.map}
           roughnessMap={boardTex.roughnessMap}
-          mirror={0.42}
-          blur={[200, 60]}
-          resolution={256}
+          mirror={isMobile ? 0.32 : 0.42}
+          blur={isMobile ? [100, 30] : [200, 60]}
+          resolution={isMobile ? 128 : 256}
           mixBlur={1}
           mixStrength={0.62}
           roughness={0.28}
@@ -185,7 +185,7 @@ function GeometriaBoard() {
 
       {/* Glowing grid lines */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 0]}>
-        <planeGeometry args={[9.8, 9.8]} />
+        <planeGeometry args={[19.7, 19.7]} />
         <meshBasicMaterial
           map={gridTex}
           transparent
@@ -195,9 +195,9 @@ function GeometriaBoard() {
         />
       </mesh>
 
-      {/* Soft orange glow pool on board */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-0.1, 0.004, 0.1]}>
-        <planeGeometry args={[5.4, 5.4]} />
+      {/* Soft orange glow pool under hero pieces */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.25, 0.004, 0.1]}>
+        <planeGeometry args={[6.0, 6.0]} />
         <meshBasicMaterial
           map={poolTex}
           transparent
@@ -213,8 +213,8 @@ function RefractionBackdrop() {
   const tex = useMemo(() => createRefractionBackdropTexture(), []);
   useEffect(() => () => tex.dispose(), [tex]);
   return (
-    <mesh position={[0.85, 1.4, -2.8]}>
-      <planeGeometry args={[6.2, 6.2]} />
+    <mesh position={[0.85, 1.5, -3.4]}>
+      <planeGeometry args={[15, 9.5]} />
       <meshBasicMaterial map={tex} transparent depthWrite={false} />
     </mesh>
   );
@@ -229,18 +229,49 @@ function InteractiveRig({
   isTouch: boolean;
   reducedMotion: boolean;
 }) {
-  const { camera } = useThree();
   const cursorLightRef = useRef<THREE.PointLight>(null);
-  const basePos = useMemo(() => new THREE.Vector3(0, 2.15, 8.0), []);
   const lookAtTarget = useMemo(() => new THREE.Vector3(0.55, 1.12, 0), []);
-
-  useEffect(() => {
-    camera.position.copy(basePos);
-    camera.lookAt(lookAtTarget);
-  }, [camera, basePos, lookAtTarget]);
+  const snappedRef = useRef(false);
 
   useFrame((state) => {
-    if (reducedMotion) return;
+    const aspect = state.size.width / Math.max(1, state.size.height);
+
+    const baseX = 0;
+    let baseY = 2.15;
+    let baseZ = 8.0;
+    let targetX = 0.55;
+    let targetY = 1.12;
+
+    if (aspect < 0.9) {
+      // Portrait / mobile: pull camera back so horizontal FOV frames both pieces centered
+      baseZ = Math.min(13.2, 6.2 / Math.max(0.46, aspect));
+      baseY = 2.45;
+      targetX = 0.92;
+      targetY = 1.32;
+    } else if (aspect < 1.55) {
+      // 4:3 or compact tablet/square ratio: slight pull-back to avoid crowding left text
+      const t = (aspect - 0.9) / 0.65;
+      baseZ = 9.0 - t * 1.0;
+      baseY = 2.25 - t * 0.1;
+      targetX = 0.72 - t * 0.17;
+      targetY = 1.18 - t * 0.06;
+    } else if (aspect > 2.05) {
+      // Ultrawide: step in slightly so pieces stay commanding across wide viewports
+      baseZ = 7.6;
+      baseY = 2.1;
+      targetX = 0.48;
+      targetY = 1.1;
+    }
+
+    lookAtTarget.set(targetX, targetY, 0);
+
+    if (reducedMotion || !snappedRef.current) {
+      state.camera.position.set(baseX, baseY, baseZ);
+      state.camera.lookAt(lookAtTarget);
+      snappedRef.current = true;
+      if (reducedMotion) return;
+    }
+
     const t = state.clock.getElapsedTime();
     const strength = HERO_3D_TUNING.PARALLAX_STRENGTH.cameraMaxOffset;
 
@@ -254,10 +285,11 @@ function InteractiveRig({
       py = pointerRef.current.y;
     }
 
-    const tx = basePos.x + px * strength;
-    const ty = basePos.y - py * (strength * 0.45);
-    state.camera.position.x += (tx - state.camera.position.x) * 0.05;
-    state.camera.position.y += (ty - state.camera.position.y) * 0.05;
+    const tx = baseX + px * strength;
+    const ty = baseY - py * (strength * 0.45);
+    state.camera.position.x += (tx - state.camera.position.x) * 0.06;
+    state.camera.position.y += (ty - state.camera.position.y) * 0.06;
+    state.camera.position.z += (baseZ - state.camera.position.z) * 0.08;
     state.camera.lookAt(lookAtTarget);
 
     if (cursorLightRef.current) {
@@ -337,22 +369,25 @@ export function HeroScene3D() {
     <div ref={hostRef} className="hero-scene-3d" aria-hidden="true">
       <Canvas
         shadows
+        style={{ width: "100%", height: "100%" }}
+        resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
         frameloop={inView ? "always" : "never"}
-        dpr={[1, 1.5]}
+        dpr={envFlags.isMobile ? [1, 1] : [1, 1.5]}
         gl={{
-          antialias: true,
+          antialias: !envFlags.isMobile,
           alpha: true,
+          powerPreference: envFlags.isMobile ? "low-power" : "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.2,
         }}
         camera={{ position: [0, 2.15, 8.0], fov: 28 }}
       >
-        <fog attach="fog" args={["#000000", 8, 22]} />
+        <fog attach="fog" args={["#000000", 10, 26]} />
 
         {/* Refraction backdrop plane behind pieces */}
         <RefractionBackdrop />
 
-        <Environment resolution={256}>
+        <Environment resolution={envFlags.isMobile ? 128 : 256}>
           {/* Big white softbox on top */}
           <Lightformer
             form="rect"
@@ -379,8 +414,8 @@ export function HeroScene3D() {
           intensity={32}
           color="#fff7ed"
           castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
+          shadow-mapSize-width={envFlags.isMobile ? 512 : 1024}
+          shadow-mapSize-height={envFlags.isMobile ? 512 : 1024}
         />
 
         <InteractiveRig
@@ -389,10 +424,10 @@ export function HeroScene3D() {
           reducedMotion={envFlags.reducedMotion}
         />
 
-        <GeometriaBoard />
+        <GeometriaBoard isMobile={envFlags.isMobile} />
         <ContactShadows
           frames={1}
-          resolution={256}
+          resolution={envFlags.isMobile ? 128 : 256}
           position={[0.75, 0.004, -0.35]}
           opacity={0.62}
           scale={11}
@@ -426,10 +461,12 @@ export function HeroScene3D() {
           />
         </Suspense>
 
-        <EffectComposer>
-          <Bloom intensity={0.3} luminanceThreshold={1.0} mipmapBlur />
-          <Vignette eskil={false} offset={0.22} darkness={0.52} />
-        </EffectComposer>
+        {!envFlags.isMobile ? (
+          <EffectComposer>
+            <Bloom intensity={0.3} luminanceThreshold={1.0} mipmapBlur />
+            <Vignette eskil={false} offset={0.22} darkness={0.52} />
+          </EffectComposer>
+        ) : null}
       </Canvas>
     </div>
   );
