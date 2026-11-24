@@ -13,6 +13,8 @@
  *   3. ember floor bounce, plus turned grooves at each joint
  */
 
+import { WaterPiece3D } from "./WaterPiece3D";
+
 export type PieceKind = "pawn" | "rook" | "knight" | "bishop" | "queen" | "king";
 export type PieceMaterial = "obsidian" | "ivory" | "chrome" | "ember" | "water";
 
@@ -157,12 +159,6 @@ const MATERIALS: Record<PieceMaterial, Material> = {
   },
 };
 
-const WATER_IMAGE_SRC: Partial<Record<PieceKind, string>> = {
-  king: "/pieces/king-water.jpg",
-  queen: "/pieces/queen-water.jpg",
-  bishop: "/pieces/bishop-water.jpg",
-};
-
 export function PieceArt({
   kind,
   material = "ivory",
@@ -180,21 +176,8 @@ export function PieceArt({
   height?: number;
   label?: string;
 }) {
-  const waterSrc = material === "water" ? WATER_IMAGE_SRC[kind] : undefined;
-  if (waterSrc) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={waterSrc}
-        alt={label ?? ""}
-        aria-hidden={label ? undefined : true}
-        width={width}
-        height={height}
-        className={`piece-water-img${className ? ` ${className}` : ""}`}
-        data-material="water"
-        draggable={false}
-      />
-    );
+  if (material === "water") {
+    return <WaterPiece3D kind={kind} className={className} label={label} />;
   }
 
   const forms = FORMS[kind];

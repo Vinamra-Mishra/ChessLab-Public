@@ -12,21 +12,21 @@ const MODES = [
     title: "Play",
     copy: "A quiet board that gets out of the way — local games, saved on your machine.",
     href: "/studio",
-    piece: "queen" as const,
+    piece: "pawn" as const,
   },
   {
     num: "02",
     title: "Analyse",
     copy: "Stockfish 19 in the loop: variations, evaluations, and the reason behind every move.",
     href: "/analysis",
-    piece: "bishop" as const,
+    piece: "knight" as const,
   },
   {
     num: "03",
     title: "Compete",
     copy: "Tournament brackets with real pairings, results and standings — no cloud required.",
     href: "/tournaments",
-    piece: "king" as const,
+    piece: "rook" as const,
   },
 ];
 
