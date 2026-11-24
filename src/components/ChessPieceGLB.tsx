@@ -7,7 +7,12 @@ import { MeshTransmissionMaterial, useGLTF } from "@react-three/drei";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { PieceKind } from "./Pieces";
 
-export type PieceVariant = "marbled-king" | "copper-queen" | "black-king" | "white-queen";
+export type PieceVariant =
+  | "marbled-king"
+  | "copper-queen"
+  | "crimson-blue"
+  | "black-king"
+  | "white-queen";
 
 /**
  * Easy-to-edit tuning knobs for the 3D hero scene.
@@ -16,6 +21,7 @@ export const HERO_3D_TUNING = {
   SWIRL_PALETTE: {
     king: ["#2fd0c8", "#7a5cff", "#f472b6", "#eab308", "#1d4ed8"] as const,
     queen: ["#c9825f", "#ff7eb6", "#ff6b2c", "#ffd7ba", "#a35238"] as const,
+    crimsonBlue: ["#0a2463", "#1d4ed8", "#2563eb", "#7f1d1d", "#b91c1c"] as const,
   },
   DISTORTION: {
     baseDistortion: 0,
@@ -216,6 +222,7 @@ export function ChessPieceGLB({
   const transMatRef = useRef<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const isKingGlass = variant === "marbled-king" || variant === "black-king";
+  const isCrimsonBlue = variant === "crimson-blue";
 
   const { geometry, meshQuaternion, offsetPos, unitScale } = useMemo(() => {
     let primary: THREE.Mesh | null = null;
@@ -264,10 +271,13 @@ export function ChessPieceGLB({
   }, [scene]);
 
   const { colorMap, iridescenceMap } = useMemo(() => {
-    return createMarbledSwirlTextures(
-      isKingGlass ? HERO_3D_TUNING.SWIRL_PALETTE.king : HERO_3D_TUNING.SWIRL_PALETTE.queen
-    );
-  }, [isKingGlass]);
+    const palette = isKingGlass
+      ? HERO_3D_TUNING.SWIRL_PALETTE.king
+      : isCrimsonBlue
+        ? HERO_3D_TUNING.SWIRL_PALETTE.crimsonBlue
+        : HERO_3D_TUNING.SWIRL_PALETTE.queen;
+    return createMarbledSwirlTextures(palette);
+  }, [isKingGlass, isCrimsonBlue]);
 
   useEffect(() => {
     return () => {
@@ -326,6 +336,20 @@ export function ChessPieceGLB({
                 clearcoatRoughness={0.03}
                 map={colorMap}
                 envMapIntensity={1.5}
+              />
+            ) : isCrimsonBlue ? (
+              <meshPhysicalMaterial
+                color="#1746a2"
+                metalness={0.72}
+                roughness={0.08}
+                clearcoat={1}
+                clearcoatRoughness={0.04}
+                iridescence={0.35}
+                iridescenceIOR={1.45}
+                iridescenceThicknessRange={[140, 620]}
+                iridescenceThicknessMap={iridescenceMap}
+                map={colorMap}
+                envMapIntensity={1.8}
               />
             ) : (
               <meshPhysicalMaterial

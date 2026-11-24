@@ -16,8 +16,6 @@ export function WaterPiece3D({
   className?: string;
   label?: string;
 }) {
-  const variant = kind === "queen" || kind === "bishop" ? "white-queen" : "black-king";
-
   return (
     <div
       className={`piece-water-3d${className ? ` ${className}` : ""}`}
@@ -40,7 +38,7 @@ export function WaterPiece3D({
         <Environment resolution={256}>
           <Lightformer
             form="rect"
-            intensity={2.6}
+            intensity={2.4}
             color="#ffffff"
             position={[0, 5, 0]}
             rotation={[Math.PI / 2, 0, 0]}
@@ -48,34 +46,41 @@ export function WaterPiece3D({
           />
           <Lightformer
             form="rect"
-            intensity={5.0}
-            color="#ff5a2a"
-            position={[-4, 1.5, 1]}
+            intensity={6.5}
+            color="#b91c1c"
+            position={[-4, 1.4, 1]}
             rotation={[0, Math.PI / 2, 0]}
-            scale={[2, 6, 1]}
+            scale={[2.2, 6, 1]}
           />
           <Lightformer
             form="rect"
-            intensity={3.5}
-            color="#6aa0ff"
-            position={[4, 2, -2]}
+            intensity={5.5}
+            color="#2563eb"
+            position={[4, 1.8, -1.5]}
             rotation={[0, -Math.PI / 2, 0]}
-            scale={[2, 6, 1]}
+            scale={[2.5, 6, 1]}
           />
           <Lightformer
             form="rect"
-            intensity={1.6}
-            color="#f5f2eb"
+            intensity={3.0}
+            color="#38bdf8"
+            position={[2.5, 2.5, -4]}
+            scale={[4, 5, 1]}
+          />
+          <Lightformer
+            form="rect"
+            intensity={1.5}
+            color="#dbeafe"
             position={[0, 1.5, 5]}
             scale={[5, 4, 1]}
           />
         </Environment>
 
-        <spotLight position={[2, 4.5, 3]} intensity={24} color="#fff7ed" />
-        <pointLight position={[-1.8, 1.2, 0.5]} intensity={14} color="#ff5a2a" />
+        <spotLight position={[2, 4.5, 3]} intensity={24} color="#eff6ff" />
+        <pointLight position={[-1.9, 1.1, 0.7]} intensity={18} color="#dc2626" />
 
         <Suspense fallback={null}>
-          <ChessPieceGLB kind={kind} variant={variant} scale={1.65} position={[0, -0.82, 0]} />
+          <ChessPieceGLB kind={kind} variant="crimson-blue" scale={1.65} position={[0, -0.82, 0]} />
         </Suspense>
       </Canvas>
     </div>

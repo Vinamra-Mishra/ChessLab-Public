@@ -98,16 +98,58 @@ function createOrangePoolTexture(): THREE.CanvasTexture {
   return tex;
 }
 
+function createBoardSurfaceTextures(): {
+  map: THREE.CanvasTexture;
+  roughnessMap: THREE.CanvasTexture;
+} {
+  const size = 512;
+  const cells = 12;
+  const step = size / cells;
+
+  const cCanvas = document.createElement("canvas");
+  cCanvas.width = size;
+  cCanvas.height = size;
+  const cCtx = cCanvas.getContext("2d")!;
+
+  const rCanvas = document.createElement("canvas");
+  rCanvas.width = size;
+  rCanvas.height = size;
+  const rCtx = rCanvas.getContext("2d")!;
+
+  for (let row = 0; row < cells; row++) {
+    for (let col = 0; col < cells; col++) {
+      const light = (row + col) % 2 === 0;
+      cCtx.fillStyle = light ? "#1e1e26" : "#08080b";
+      cCtx.fillRect(col * step, row * step, step, step);
+      rCtx.fillStyle = light ? "#3d3d42" : "#222228";
+      rCtx.fillRect(col * step, row * step, step, step);
+    }
+  }
+
+  const map = new THREE.CanvasTexture(cCanvas);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.anisotropy = 8;
+  map.needsUpdate = true;
+
+  const roughnessMap = new THREE.CanvasTexture(rCanvas);
+  roughnessMap.needsUpdate = true;
+
+  return { map, roughnessMap };
+}
+
 function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
   const gridTex = useMemo(() => createGridGlowTexture(), []);
   const poolTex = useMemo(() => createOrangePoolTexture(), []);
+  const boardTex = useMemo(() => createBoardSurfaceTextures(), []);
 
   useEffect(() => {
     return () => {
       gridTex.dispose();
       poolTex.dispose();
+      boardTex.map.dispose();
+      boardTex.roughnessMap.dispose();
     };
-  }, [gridTex, poolTex]);
+  }, [gridTex, poolTex, boardTex]);
 
   return (
     <group position={[0.5, 0, -0.4]}>
@@ -125,17 +167,19 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]} receiveShadow>
         <planeGeometry args={[9.9, 9.9]} />
         <MeshReflectorMaterial
-          mirror={0.45}
+          map={boardTex.map}
+          roughnessMap={boardTex.roughnessMap}
+          mirror={0.42}
           blur={[300, 100]}
           resolution={isMobile ? 256 : 512}
           mixBlur={1}
-          mixStrength={0.85}
-          roughness={0.32}
+          mixStrength={0.65}
+          roughness={0.28}
           depthScale={1}
           minDepthThreshold={0.4}
           maxDepthThreshold={1.4}
-          color="#0c0c11"
-          metalness={0.18}
+          color="#ffffff"
+          metalness={0.22}
         />
       </mesh>
 
@@ -321,7 +365,7 @@ export function HeroScene3D() {
           {/* Colorful side & back strips */}
           <Lightformer form="rect" intensity={4.0} color="#ff6ec7" position={[-5, 2.5, -1]} rotation={[0, Math.PI / 2, 0]} scale={[2.5, 7, 1]} />
           <Lightformer form="rect" intensity={4.0} color="#2fd0c8" position={[5.5, 2.2, 0]} rotation={[0, -Math.PI / 2, 0]} scale={[2.5, 7, 1]} />
-          <Lightformer form="rect" intensity={3.5} color="#7a5cff" position={[0, 3.2, -5.5]} scale={[7, 4, 1]} />
+          <Lightformer form="rect" intensity={1.8} color="#7a5cff" position={[0, 3.2, -5.5]} scale={[7, 4, 1]} />
           <Lightformer form="rect" intensity={4.5} color="#ff5a1f" position={[-4, 1.4, 2.5]} rotation={[0, Math.PI / 3, 0]} scale={[2, 6, 1]} />
           <Lightformer form="rect" intensity={3.2} color="#5ea0ff" position={[4.5, 3.6, -3.5]} rotation={[0, -Math.PI / 3, 0]} scale={[2.2, 7, 1]} />
           {/* Tall thin white streak front-left */}
