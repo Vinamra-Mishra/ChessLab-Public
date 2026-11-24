@@ -137,7 +137,7 @@ function createBoardSurfaceTextures(): {
   return { map, roughnessMap };
 }
 
-function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
+function GeometriaBoard() {
   const gridTex = useMemo(() => createGridGlowTexture(), []);
   const poolTex = useMemo(() => createOrangePoolTexture(), []);
   const boardTex = useMemo(() => createBoardSurfaceTextures(), []);
@@ -152,7 +152,7 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
   }, [gridTex, poolTex, boardTex]);
 
   return (
-    <group position={[0.5, 0, -0.4]}>
+    <group position={[0.75, 0, -0.35]}>
       {/* Dark beveled metallic slab */}
       <mesh position={[0, -0.14, 0]} receiveShadow>
         <boxGeometry args={[10.4, 0.24, 10.4]} />
@@ -170,8 +170,8 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
           map={boardTex.map}
           roughnessMap={boardTex.roughnessMap}
           mirror={0.42}
-          blur={[300, 100]}
-          resolution={isMobile ? 256 : 512}
+          blur={[200, 60]}
+          resolution={256}
           mixBlur={1}
           mixStrength={0.62}
           roughness={0.28}
@@ -196,7 +196,7 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
       </mesh>
 
       {/* Soft orange glow pool on board */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.1, 0.004, 0.2]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-0.1, 0.004, 0.1]}>
         <planeGeometry args={[5.4, 5.4]} />
         <meshBasicMaterial
           map={poolTex}
@@ -231,8 +231,8 @@ function InteractiveRig({
 }) {
   const { camera } = useThree();
   const cursorLightRef = useRef<THREE.PointLight>(null);
-  const basePos = useMemo(() => new THREE.Vector3(0, 2.1, 7.8), []);
-  const lookAtTarget = useMemo(() => new THREE.Vector3(0.45, 1.15, 0), []);
+  const basePos = useMemo(() => new THREE.Vector3(0, 2.15, 8.0), []);
+  const lookAtTarget = useMemo(() => new THREE.Vector3(0.55, 1.12, 0), []);
 
   useEffect(() => {
     camera.position.copy(basePos);
@@ -338,21 +338,21 @@ export function HeroScene3D() {
       <Canvas
         shadows
         frameloop={inView ? "always" : "never"}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         gl={{
           antialias: true,
           alpha: true,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.2,
         }}
-        camera={{ position: [0, 2.1, 7.8], fov: 28 }}
+        camera={{ position: [0, 2.15, 8.0], fov: 28 }}
       >
-        <fog attach="fog" args={["#000000", 8, 20]} />
+        <fog attach="fog" args={["#000000", 8, 22]} />
 
         {/* Refraction backdrop plane behind pieces */}
         <RefractionBackdrop />
 
-        <Environment resolution={envFlags.isMobile ? 256 : 1024}>
+        <Environment resolution={256}>
           {/* Big white softbox on top */}
           <Lightformer
             form="rect"
@@ -389,15 +389,23 @@ export function HeroScene3D() {
           reducedMotion={envFlags.reducedMotion}
         />
 
-        <GeometriaBoard isMobile={envFlags.isMobile} />
-        <ContactShadows position={[0.5, 0.004, -0.4]} opacity={0.62} scale={11} blur={2.4} far={3.5} />
+        <GeometriaBoard />
+        <ContactShadows
+          frames={1}
+          resolution={256}
+          position={[0.75, 0.004, -0.35]}
+          opacity={0.62}
+          scale={11}
+          blur={2.4}
+          far={3.5}
+        />
 
         <Suspense fallback={null}>
           <ChessPieceGLB
             kind="king"
             variant="marbled-king"
-            scale={2.45}
-            position={[0.55, 0, -0.25]}
+            scale={2.4}
+            position={[0.65, 0, -0.25]}
             pointerRef={pointerRef}
             rotDamping={0.055}
             isMobile={envFlags.isMobile}
@@ -407,8 +415,8 @@ export function HeroScene3D() {
           <ChessPieceGLB
             kind="queen"
             variant="copper-queen"
-            scale={2.05}
-            position={[1.18, 0.12, 0.28]}
+            scale={2.0}
+            position={[1.28, 0.12, 0.25]}
             rotation={[0.04, 0.22, -0.42]}
             pointerRef={pointerRef}
             rotDamping={0.095}

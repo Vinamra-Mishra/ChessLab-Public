@@ -202,29 +202,6 @@ export default function StudioPage() {
         </div>
       </section>
 
-      {/* anatomy list: alternating rows */}
-      <section className="section section--tight anatomy">
-        <div className="wrap">
-          <p className="eyebrow">
-            <span className="eyebrow__num">02</span> Anatomy
-          </p>
-          <div className="anatomy__list">
-            {SURFACES.map((surface, index) => (
-              <article className="anatomy__row" key={surface.title}>
-                <div className="anatomy__art" data-flip={index % 2 === 1}>
-                  <PieceArt kind={surface.piece} material="water" />
-                </div>
-                <div className="anatomy__body">
-                  <span className="anatomy__meta">{surface.meta}</span>
-                  <h3 className="display-md">{surface.title}</h3>
-                  <p>{surface.copy}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* flow: four steps on a hairline rail */}
       <section className="section flow-band">
         <div className="wrap">

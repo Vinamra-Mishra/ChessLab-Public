@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { MeshTransmissionMaterial, useGLTF } from "@react-three/drei";
@@ -15,13 +15,13 @@ export type PieceVariant =
   | "white-queen";
 
 /**
- * Easy-to-edit tuning knobs for the 3D hero scene.
+ * Easy-to-edit tuning knobs for the 3D hero & card scenes.
  */
 export const HERO_3D_TUNING = {
   SWIRL_PALETTE: {
     king: ["#2fd0c8", "#7a5cff", "#f472b6", "#eab308", "#1d4ed8"] as const,
     queen: ["#c9825f", "#ff7eb6", "#ff6b2c", "#ffd7ba", "#a35238"] as const,
-    crimsonBlue: ["#0a2463", "#1d4ed8", "#2563eb", "#7f1d1d", "#b91c1c"] as const,
+    crimsonBlue: ["#1d4ed8", "#3b82f6", "#60a5fa", "#dc2626", "#f87171"] as const,
   },
   DISTORTION: {
     baseDistortion: 0,
@@ -62,6 +62,21 @@ for (const url of Object.values(MODEL_PATHS)) {
   useGLTF.preload(url);
 }
 
+interface NormalizedGeoData {
+  geometry: THREE.BufferGeometry;
+  meshQuaternion: THREE.Quaternion;
+  offsetPos: THREE.Vector3;
+  unitScale: number;
+}
+
+interface SwirlTexturePair {
+  colorMap: THREE.CanvasTexture;
+  iridescenceMap: THREE.CanvasTexture;
+}
+
+const GEOMETRY_CACHE = new Map<PieceKind, NormalizedGeoData>();
+const SWIRL_CACHE = new Map<string, SwirlTexturePair>();
+
 function hash2(x: number, y: number): number {
   const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
   return s - Math.floor(s);
@@ -98,10 +113,10 @@ function hexToRgb(hex: string): [number, number, number] {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
-function createMarbledSwirlTextures(paletteHex: readonly string[]): {
-  colorMap: THREE.CanvasTexture;
-  iridescenceMap: THREE.CanvasTexture;
-} {
+function getOrCreateSwirlTextures(cacheKey: string, paletteHex: readonly string[]): SwirlTexturePair {
+  const cached = SWIRL_CACHE.get(cacheKey);
+  if (cached) return cached;
+
   const size = 256;
   const palette = paletteHex.map(hexToRgb);
 
@@ -121,7 +136,6 @@ function createMarbledSwirlTextures(paletteHex: readonly string[]): {
     const v = py / size;
     for (let px = 0; px < size; px++) {
       const u = px / size;
-      // Seamless cylindrical horizontal wrap + domain-warped fBM swirl
       const sx = Math.cos(u * Math.PI * 2) * 1.4 + 3.2;
       const sz = Math.sin(u * Math.PI * 2) * 1.4 + 3.2;
       const sy = v * 4.2;
@@ -171,7 +185,9 @@ function createMarbledSwirlTextures(paletteHex: readonly string[]): {
   iridescenceMap.colorSpace = THREE.NoColorSpace;
   iridescenceMap.needsUpdate = true;
 
-  return { colorMap, iridescenceMap };
+  const pair = { colorMap, iridescenceMap };
+  SWIRL_CACHE.set(cacheKey, pair);
+  return pair;
 }
 
 function applyCylindricalUVs(geo: THREE.BufferGeometry): void {
@@ -194,6 +210,57 @@ function applyCylindricalUVs(geo: THREE.BufferGeometry): void {
   geo.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
 }
 
+function getOrCreateNormalizedGeo(kind: PieceKind, scene: THREE.Object3D): NormalizedGeoData {
+  const cached = GEOMETRY_CACHE.get(kind);
+  if (cached) return cached;
+
+  let primary: THREE.Mesh | null = null;
+  scene.traverse((obj) => {
+    if ((obj as THREE.Mesh).isMesh) {
+      if (!primary || (!obj.name.endsWith(".001") && primary.name.endsWith(".001"))) {
+        primary = obj as THREE.Mesh;
+      }
+    }
+  });
+
+  const source = primary as THREE.Mesh | null;
+  if (!source) {
+    return {
+      geometry: new THREE.BufferGeometry(),
+      meshQuaternion: new THREE.Quaternion(),
+      offsetPos: new THREE.Vector3(),
+      unitScale: 1,
+    };
+  }
+
+  const cloned = source.geometry.clone();
+  if (cloned.getAttribute("normal")) {
+    cloned.deleteAttribute("normal");
+  }
+  const welded = mergeVertices(cloned, 1e-4);
+  cloned.dispose();
+  welded.computeVertexNormals();
+  applyCylindricalUVs(welded);
+
+  const tempMesh = new THREE.Mesh(welded);
+  tempMesh.quaternion.copy(source.quaternion);
+  tempMesh.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(tempMesh);
+  const size = new THREE.Vector3();
+  const center = new THREE.Vector3();
+  box.getSize(size);
+  box.getCenter(center);
+
+  const data: NormalizedGeoData = {
+    geometry: welded,
+    meshQuaternion: source.quaternion.clone(),
+    offsetPos: new THREE.Vector3(-center.x, -box.min.y, -center.z),
+    unitScale: 1 / (size.y || 1),
+  };
+  GEOMETRY_CACHE.set(kind, data);
+  return data;
+}
+
 export function ChessPieceGLB({
   kind,
   variant,
@@ -202,7 +269,6 @@ export function ChessPieceGLB({
   rotation = [0, 0, 0],
   pointerRef,
   rotDamping = 0.06,
-  isMobile = false,
   isTouch = false,
   reducedMotion = false,
 }: {
@@ -224,74 +290,22 @@ export function ChessPieceGLB({
   const isKingGlass = variant === "marbled-king" || variant === "black-king";
   const isCrimsonBlue = variant === "crimson-blue";
 
-  const { geometry, meshQuaternion, offsetPos, unitScale } = useMemo(() => {
-    let primary: THREE.Mesh | null = null;
-    scene.traverse((obj) => {
-      if ((obj as THREE.Mesh).isMesh) {
-        if (!primary || (!obj.name.endsWith(".001") && primary.name.endsWith(".001"))) {
-          primary = obj as THREE.Mesh;
-        }
-      }
-    });
-
-    const source = primary as THREE.Mesh | null;
-    if (!source) {
-      return {
-        geometry: new THREE.BufferGeometry(),
-        meshQuaternion: new THREE.Quaternion(),
-        offsetPos: new THREE.Vector3(),
-        unitScale: 1,
-      };
-    }
-
-    const cloned = source.geometry.clone();
-    if (cloned.getAttribute("normal")) {
-      cloned.deleteAttribute("normal");
-    }
-    const welded = mergeVertices(cloned, 1e-4);
-    cloned.dispose();
-    welded.computeVertexNormals();
-    applyCylindricalUVs(welded);
-
-    const tempMesh = new THREE.Mesh(welded);
-    tempMesh.quaternion.copy(source.quaternion);
-    tempMesh.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(tempMesh);
-    const size = new THREE.Vector3();
-    const center = new THREE.Vector3();
-    box.getSize(size);
-    box.getCenter(center);
-
-    return {
-      geometry: welded,
-      meshQuaternion: source.quaternion.clone(),
-      offsetPos: new THREE.Vector3(-center.x, -box.min.y, -center.z),
-      unitScale: 1 / (size.y || 1),
-    };
-  }, [scene]);
+  const { geometry, meshQuaternion, offsetPos, unitScale } = useMemo(
+    () => getOrCreateNormalizedGeo(kind, scene),
+    [kind, scene]
+  );
 
   const { colorMap, iridescenceMap } = useMemo(() => {
-    const palette = isKingGlass
-      ? HERO_3D_TUNING.SWIRL_PALETTE.king
-      : isCrimsonBlue
-        ? HERO_3D_TUNING.SWIRL_PALETTE.crimsonBlue
-        : HERO_3D_TUNING.SWIRL_PALETTE.queen;
-    return createMarbledSwirlTextures(palette);
+    const key = isKingGlass ? "king" : isCrimsonBlue ? "crimsonBlue" : "queen";
+    const palette = HERO_3D_TUNING.SWIRL_PALETTE[key];
+    return getOrCreateSwirlTextures(key, palette);
   }, [isKingGlass, isCrimsonBlue]);
-
-  useEffect(() => {
-    return () => {
-      geometry.dispose();
-      colorMap.dispose();
-      iridescenceMap.dispose();
-    };
-  }, [geometry, colorMap, iridescenceMap]);
 
   useFrame(({ clock }) => {
     if (reducedMotion || !outerGroupRef.current) return;
+    if (!pointerRef && !isTouch) return;
 
     const t = clock.getElapsedTime();
-
     let targetRx = rotation[0];
     let targetRy = rotation[1];
 
@@ -326,8 +340,8 @@ export function ChessPieceGLB({
                 distortionScale={HERO_3D_TUNING.DISTORTION.distortionScale}
                 temporalDistortion={HERO_3D_TUNING.DISTORTION.temporalDistortion}
                 backside
-                samples={isMobile ? 4 : 8}
-                resolution={isMobile ? 256 : 512}
+                samples={4}
+                resolution={256}
                 iridescence={1}
                 iridescenceIOR={1.6}
                 iridescenceThicknessRange={[100, 900]}
@@ -339,17 +353,19 @@ export function ChessPieceGLB({
               />
             ) : isCrimsonBlue ? (
               <meshPhysicalMaterial
-                color="#1746a2"
-                metalness={0.72}
-                roughness={0.08}
+                color="#3b82f6"
+                emissive="#172554"
+                emissiveIntensity={0.42}
+                metalness={0.52}
+                roughness={0.11}
                 clearcoat={1}
                 clearcoatRoughness={0.04}
-                iridescence={0.35}
-                iridescenceIOR={1.45}
+                iridescence={0.55}
+                iridescenceIOR={1.5}
                 iridescenceThicknessRange={[140, 620]}
                 iridescenceThicknessMap={iridescenceMap}
                 map={colorMap}
-                envMapIntensity={1.8}
+                envMapIntensity={2.6}
               />
             ) : (
               <meshPhysicalMaterial
