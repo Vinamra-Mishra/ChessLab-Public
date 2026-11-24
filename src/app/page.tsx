@@ -41,6 +41,71 @@ export default function Home() {
     <div className="page home">
       <PieceDefs />
 
+      {/* -------------------------------------- water-style gallery hero */}
+      <section className="water-gallery" aria-label="ChessLab Water Gallery Hero">
+        <div className="water-gallery__frame">
+          <div className="water-gallery__stage" aria-hidden="true">
+            <div className="water-gallery__grid" />
+            <div className="water-gallery__piece">
+              <PieceArt kind="knight" material="water" glow />
+            </div>
+            <div className="water-gallery__piece">
+              <PieceArt kind="bishop" material="water" glow />
+            </div>
+            <div className="water-gallery__piece">
+              <PieceArt kind="queen" material="water" glow />
+            </div>
+            <div className="water-gallery__piece">
+              <PieceArt kind="king" material="water" glow />
+            </div>
+          </div>
+
+          <div className="water-gallery__content">
+            <div>
+              <div className="water-gallery__badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 3" />
+                </svg>
+                Offline-first Chess Intelligence · Coming Soon
+              </div>
+              <h1 className="water-gallery__title">
+                Discover chess that makes a move — before you play it.
+              </h1>
+            </div>
+
+            <div>
+              <div className="water-gallery__meta">
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                    <rect x="9" y="9" width="6" height="6" />
+                  </svg>
+                  Stockfish 19 Local Engine
+                </span>
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 14l4-4 4 3 5-6" />
+                  </svg>
+                  Expected Points &amp; AI Coach
+                </span>
+              </div>
+              <p className="water-gallery__desc">
+                ChessLab combines local Stockfish 19 analysis, 11-tier Expected Points game review,
+                spaced-repetition openings, and personal coaching in one offline desktop studio.
+              </p>
+              <Link className="water-gallery__cta" href="/download">
+                Explore Upcoming Release
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ---------------------------------------------- cinematic hero */}
       <section className="hero">
         <div className="hero__beams" aria-hidden="true">
@@ -98,16 +163,16 @@ export default function Home() {
 
           <div className="hero__stage" aria-hidden="true">
             <div className="hero__figure hero__figure--king">
-              <PieceArt kind="king" material="obsidian" glow />
+              <PieceArt kind="king" material="water" glow />
             </div>
             <div className="hero__figure hero__figure--bishop">
-              <PieceArt kind="bishop" material="ivory" glow />
+              <PieceArt kind="bishop" material="water" glow />
             </div>
             <div className="hero__figure hero__figure--knight">
-              <PieceArt kind="knight" material="obsidian" />
+              <PieceArt kind="knight" material="water" glow />
             </div>
             <div className="hero__figure hero__figure--pawn">
-              <PieceArt kind="pawn" material="chrome" />
+              <PieceArt kind="pawn" material="water" glow />
             </div>
           </div>
 
@@ -153,7 +218,7 @@ export default function Home() {
             Scroll to explore
           </span>
           <span className="hero__foot-meta">
-            Windows · macOS · Linux <i /> Private beta
+            Windows · macOS · Linux <i /> Coming Soon
           </span>
         </div>
       </section>
@@ -208,7 +273,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="mode__art">
-                  <PieceArt kind={mode.piece} material={mode.num === "02" ? "ivory" : "obsidian"} />
+                  <PieceArt kind={mode.piece} material="water" glow />
                 </div>
                 <h3 className="display-sm">{mode.title}</h3>
                 <p>{mode.copy}</p>

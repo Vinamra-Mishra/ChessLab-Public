@@ -346,6 +346,10 @@ export function PieceDefs() {
           <stop offset="0" stopColor="#ff8a3d" stopOpacity="0" />
           <stop offset="1" stopColor="#ff8a3d" stopOpacity="0.42" />
         </linearGradient>
+        <linearGradient id="pa-floor-water" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#38bdf8" stopOpacity="0" />
+          <stop offset="1" stopColor="#38bdf8" stopOpacity="0.42" />
+        </linearGradient>
 
         <radialGradient id="pa-glow-obsidian">
           <stop offset="0" stopColor="#ff5b2e" stopOpacity="0.5" />
@@ -366,6 +370,11 @@ export function PieceDefs() {
           <stop offset="0" stopColor="#ff8a3d" stopOpacity="0.5" />
           <stop offset="0.46" stopColor="#ff8a3d" stopOpacity="0.14" />
           <stop offset="1" stopColor="#ff8a3d" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="pa-glow-water">
+          <stop offset="0" stopColor="#38bdf8" stopOpacity="0.44" />
+          <stop offset="0.46" stopColor="#5eead4" stopOpacity="0.16" />
+          <stop offset="1" stopColor="#38bdf8" stopOpacity="0" />
         </radialGradient>
       </defs>
     </svg>
