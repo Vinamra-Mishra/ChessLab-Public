@@ -221,6 +221,149 @@ function buildWaterRibbons(
   return { ribbons, droplets };
 }
 
+function createWaterTextures(): {
+  colorMap: THREE.CanvasTexture;
+  normalMap: THREE.CanvasTexture;
+  roughnessMap: THREE.CanvasTexture;
+} {
+  const size = 256;
+  const tau = Math.PI * 2;
+
+  const heightAt = (u: number, v: number) => {
+    const x = u * tau;
+    const y = v * tau;
+    return (
+      Math.sin(x * 3 + Math.cos(y * 2)) * 0.42 +
+      Math.cos(y * 4 - Math.sin(x * 3)) * 0.34 +
+      Math.sin((x + y) * 5) * 0.16 +
+      Math.cos((x * 2 - y * 3) * 2) * 0.08
+    );
+  };
+
+  // 1. Seamless tangent-space ripple normal map + roughness map
+  const normalCanvas = document.createElement("canvas");
+  normalCanvas.width = size;
+  normalCanvas.height = size;
+  const nCtx = normalCanvas.getContext("2d")!;
+  const nImg = nCtx.createImageData(size, size);
+
+  const roughCanvas = document.createElement("canvas");
+  roughCanvas.width = size;
+  roughCanvas.height = size;
+  const rCtx = roughCanvas.getContext("2d")!;
+  const rImg = rCtx.createImageData(size, size);
+
+  const colorCanvas = document.createElement("canvas");
+  colorCanvas.width = size;
+  colorCanvas.height = size;
+  const cCtx = colorCanvas.getContext("2d")!;
+  const cImg = cCtx.createImageData(size, size);
+
+  const eps = 1 / size;
+  const strength = 2.6;
+
+  for (let py = 0; py < size; py++) {
+    const v = py / size;
+    for (let px = 0; px < size; px++) {
+      const u = px / size;
+      const h = heightAt(u, v);
+      const hx = heightAt(u + eps, v) - heightAt(u - eps, v);
+      const hy = heightAt(u, v + eps) - heightAt(u, v - eps);
+
+      let nx = -hx * strength;
+      let ny = -hy * strength;
+      let nz = 1.0;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      nx /= len;
+      ny /= len;
+      nz /= len;
+
+      const idx = (py * size + px) * 4;
+      nImg.data[idx] = Math.round((nx * 0.5 + 0.5) * 255);
+      nImg.data[idx + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      nImg.data[idx + 2] = Math.round((nz * 0.5 + 0.5) * 255);
+      nImg.data[idx + 3] = 255;
+
+      // Caustic filament intensity: sharp bright ridges where |h| approaches zero/crest
+      const ridge = Math.pow(1 - Math.min(1, Math.abs(Math.sin(u * tau * 3 + h * 1.6))), 3.5);
+      const ridge2 = Math.pow(1 - Math.min(1, Math.abs(Math.cos(v * tau * 4 - h * 1.4))), 4.0);
+      const caustic = Math.min(1, ridge * 0.7 + ridge2 * 0.65);
+
+      const roughVal = Math.round(THREE.MathUtils.clamp(22 + (1 - caustic) * 48, 12, 90));
+      rImg.data[idx] = roughVal;
+      rImg.data[idx + 1] = roughVal;
+      rImg.data[idx + 2] = roughVal;
+      rImg.data[idx + 3] = 255;
+
+      // Translucent aqua-cerulean swirls with crisp caustic highlights
+      const swirl = (h + 1) * 0.5;
+      const cr = Math.round(THREE.MathUtils.clamp(120 + swirl * 65 + caustic * 70, 0, 255));
+      const cg = Math.round(THREE.MathUtils.clamp(215 + swirl * 30 + caustic * 25, 0, 255));
+      const cb = Math.round(THREE.MathUtils.clamp(242 + swirl * 13, 0, 255));
+      cImg.data[idx] = cr;
+      cImg.data[idx + 1] = cg;
+      cImg.data[idx + 2] = cb;
+      cImg.data[idx + 3] = 255;
+    }
+  }
+
+  nCtx.putImageData(nImg, 0, 0);
+  rCtx.putImageData(rImg, 0, 0);
+  cCtx.putImageData(cImg, 0, 0);
+
+  const setup = (canvas: HTMLCanvasElement, srgb: boolean) => {
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(2, 2);
+    tex.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    tex.needsUpdate = true;
+    return tex;
+  };
+
+  return {
+    colorMap: setup(colorCanvas, true),
+    normalMap: setup(normalCanvas, false),
+    roughnessMap: setup(roughCanvas, false),
+  };
+}
+
+function buildInternalBubbles(
+  mat: THREE.Material,
+  disposables: THREE.BufferGeometry[]
+): THREE.Group {
+  const bubbles = new THREE.Group();
+  const specs: Array<[number, number, number, number]> = [
+    [0.06, -1.12, 0.08, 0.036],
+    [-0.14, -1.08, -0.05, 0.028],
+    [0.12, -0.96, -0.1, 0.022],
+    [-0.08, -0.78, 0.09, 0.032],
+    [0.05, -0.62, -0.06, 0.024],
+    [-0.04, -0.45, 0.05, 0.02],
+    [0.09, -0.28, 0.04, 0.026],
+    [-0.07, -0.12, -0.04, 0.018],
+    [0.03, 0.06, 0.06, 0.025],
+    [-0.06, 0.22, -0.03, 0.017],
+    [0.08, 0.42, 0.03, 0.022],
+    [-0.04, 0.58, 0.05, 0.019],
+    [0.05, 0.74, -0.04, 0.024],
+    [-0.08, 0.88, 0.02, 0.016],
+    [0.02, 1.02, 0.04, 0.021],
+    [-0.18, -1.18, 0.14, 0.038],
+    [0.2, -1.14, 0.11, 0.034],
+    [0.0, -0.88, -0.14, 0.03],
+  ];
+
+  for (const [x, y, z, r] of specs) {
+    const geo = new THREE.SphereGeometry(r, 12, 12);
+    disposables.push(geo);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, y, z);
+    bubbles.add(mesh);
+  }
+  return bubbles;
+}
+
 export function WaterPiece3D({
   kind,
   className,
@@ -261,18 +404,37 @@ export function WaterPiece3D({
     camera.position.set(0, 0.35, 5.4);
     camera.lookAt(0, 0.05, 0);
 
+    const { colorMap, normalMap, roughnessMap } = createWaterTextures();
+
     const waterMat = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color("#dff7ff"),
+      map: colorMap,
+      normalMap,
+      normalScale: new THREE.Vector2(0.65, 0.65),
+      roughnessMap,
       metalness: 0.0,
-      roughness: 0.05,
-      transmission: 0.92,
+      roughness: 0.12,
+      transmission: 0.86,
       ior: 1.333,
-      thickness: 1.4,
+      thickness: 1.8,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.04,
-      attenuationColor: new THREE.Color("#0ea5e9"),
-      attenuationDistance: 1.9,
-      envMapIntensity: 1.45,
+      clearcoatRoughness: 0.06,
+      attenuationColor: new THREE.Color("#0284c7"),
+      attenuationDistance: 1.5,
+      iridescence: 0.42,
+      iridescenceIOR: 1.333,
+      iridescenceThicknessRange: [120, 420],
+      sheen: 0.35,
+      sheenColor: new THREE.Color("#7dd3fc"),
+      envMapIntensity: 1.5,
+    });
+
+    const bubbleMat = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color("#f0fdff"),
+      metalness: 0.0,
+      roughness: 0.02,
+      opacity: 0.58,
+      transparent: true,
     });
 
     const keyLight = new THREE.DirectionalLight("#e8f8ff", 2.2);
@@ -289,6 +451,7 @@ export function WaterPiece3D({
 
     const group = new THREE.Group();
     group.add(buildPieceMeshes(kind, waterMat, disposables));
+    group.add(buildInternalBubbles(bubbleMat, disposables));
     const { ribbons, droplets } = buildWaterRibbons(waterMat, disposables);
     group.add(ribbons);
     scene.add(group);
@@ -333,6 +496,9 @@ export function WaterPiece3D({
         group.rotation.y += (targetRotY - group.rotation.y) * 0.08;
         group.rotation.x += (targetRotX - group.rotation.x) * 0.08;
         ribbons.rotation.y = Math.sin(t * 0.6) * 0.14;
+        normalMap.offset.y = t * 0.06;
+        normalMap.offset.x = Math.sin(t * 0.3) * 0.04;
+        colorMap.offset.y = t * 0.035;
         for (const d of droplets) {
           const a = d.phase + t * d.speed;
           d.mesh.position.set(
@@ -386,7 +552,11 @@ export function WaterPiece3D({
       host.removeEventListener("pointermove", onPointerMove);
       host.removeEventListener("pointerleave", onPointerLeave);
       for (const geo of disposables) geo.dispose();
+      colorMap.dispose();
+      normalMap.dispose();
+      roughnessMap.dispose();
       waterMat.dispose();
+      bubbleMat.dispose();
       envTarget.dispose();
       pmrem.dispose();
       renderer.dispose();
