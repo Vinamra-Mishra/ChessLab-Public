@@ -157,6 +157,12 @@ const MATERIALS: Record<PieceMaterial, Material> = {
   },
 };
 
+const WATER_IMAGE_SRC: Partial<Record<PieceKind, string>> = {
+  king: "/pieces/king-water.jpg",
+  queen: "/pieces/queen-water.jpg",
+  bishop: "/pieces/bishop-water.jpg",
+};
+
 export function PieceArt({
   kind,
   material = "ivory",
@@ -174,6 +180,23 @@ export function PieceArt({
   height?: number;
   label?: string;
 }) {
+  const waterSrc = material === "water" ? WATER_IMAGE_SRC[kind] : undefined;
+  if (waterSrc) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={waterSrc}
+        alt={label ?? ""}
+        aria-hidden={label ? undefined : true}
+        width={width}
+        height={height}
+        className={`piece-water-img${className ? ` ${className}` : ""}`}
+        data-material="water"
+        draggable={false}
+      />
+    );
+  }
+
   const forms = FORMS[kind];
   const joints = JOINTS[kind] ?? [];
   const m = MATERIALS[material];

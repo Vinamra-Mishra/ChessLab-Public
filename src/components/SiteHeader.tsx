@@ -12,17 +12,6 @@ const NAV = [
   { href: "/download", label: "Download" },
 ];
 
-function KnightGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M14.6 3.2 17 3l.4 2.3c1.5.9 2.4 2.4 2.4 4.2 0 .9-.2 1.6-.6 2.3l1.4.9-1.7 1.4c-.5.4-1.1.6-1.8.6H15l-.7 1.6 5.6 2.2c.5.2.8.7.8 1.2v1.1H3.3v-1.3c0-1.6.9-3 2.4-3.7l4.6-2.1c.6-.3 1.1-.8 1.3-1.4l.6-1.9-2.9.9.5-2.4c.2-1.1.9-2 1.9-2.5l2.4-1.2.2-2.6Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 function Plus({ side }: { side?: "left" | "right" }) {
   return (
     <span
@@ -52,7 +41,8 @@ export function SiteHeader() {
           <Plus side="left" />
           <div className="brandcell">
             <Link href="/" className="brandline" aria-label="ChessLab home">
-              <KnightGlyph />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/chesslab-logo.svg" alt="" width={22} height={22} aria-hidden="true" />
               ChessLab
               <em>Studio</em>
             </Link>
