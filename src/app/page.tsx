@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HeroScene3D } from "@/components/HeroScene3D";
 import { PieceArt, PieceDefs } from "@/components/Pieces";
 
 const HERO_BULLETS = [
@@ -42,107 +43,43 @@ export default function Home() {
       <PieceDefs />
 
       {/* ---------------------------------------------- cinematic hero */}
-      <section className="hero">
-        <div className="hero__beams" aria-hidden="true">
-          <span className="hero__beam hero__beam--ember" />
-          <span className="hero__beam hero__beam--white" />
-        </div>
+      <section className="hero hero--cinematic">
+        <HeroScene3D />
 
-        <div className="hero__inner">
-          <div className="hero__copy">
-            <p className="eyebrow rise">
-              <span className="eyebrow__num">(</span> Offline-first chess studio{" "}
-              <span className="eyebrow__num">)</span>
-            </p>
-
-            <h1 className="hero__title">
-              <span className="hero__line rise">Master</span>
-              <span className="hero__line hero__line--aside rise-2">
-                <span className="hero__line-alt">The</span>
-                <span className="hero__rule" aria-hidden="true" />
-              </span>
-              <span className="hero__line rise-3">
-                <span className="stroke-type">Chess</span>
-              </span>
+        <div className="hero-cine__wrap">
+          <div className="hero-cine__top">
+            <h1 className="hero-cine__title">
+              <span className="hero-cine__left rise">MASTER AI</span>
+              <span className="hero-cine__right rise-2">CHESS</span>
             </h1>
+          </div>
 
-            <p className="hero__lede rise-3">
-              Turn your chess vision into true mastery with intelligent, results-focused
-              analysis — all on your own machine.
-            </p>
+          <div className="hero-cine__mid">
+            <div className="hero-cine__leftcol">
+              <p className="hero__lede rise-3">
+                Turn your chess vision into true mastery with intelligent, results-focused
+                analysis — all on your own machine.
+              </p>
 
-            <div className="hero__actions rise-3">
+              <ul className="hero__stack rise-3" aria-label="Highlights">
+                {HERO_BULLETS.map((item) => (
+                  <li key={item.num}>
+                    <span>{item.num}/</span>
+                    <b>{item.label}</b>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="hero-cine__rightcol rise-3">
               <Link className="btn-pill btn-pill--light" href="/download">
                 Play now
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
-              <Link className="btn-pill btn-pill--outline" href="/studio">
-                Watch the studio
-                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
             </div>
           </div>
-
-          <ul className="hero__stack" aria-label="Highlights">
-            {HERO_BULLETS.map((item) => (
-              <li key={item.num}>
-                <span>{item.num}</span>
-                <b>{item.label}</b>
-              </li>
-            ))}
-          </ul>
-
-          <div className="hero__stage" aria-hidden="true">
-            <div className="hero__figure hero__figure--king">
-              <PieceArt kind="king" material="water" glow />
-            </div>
-            <div className="hero__figure hero__figure--bishop">
-              <PieceArt kind="bishop" material="water" glow />
-            </div>
-            <div className="hero__figure hero__figure--knight">
-              <PieceArt kind="knight" material="water" glow />
-            </div>
-            <div className="hero__figure hero__figure--pawn">
-              <PieceArt kind="queen" material="water" glow />
-            </div>
-          </div>
-
-          <span className="hero__spec hero__spec--left" aria-hidden="true">
-            sicilian · b90
-          </span>
-          <span className="hero__spec hero__spec--right" aria-hidden="true">
-            eval +0.42 · depth 34
-          </span>
-
-          <aside className="hero__card" aria-label="Sample review summary">
-            <div className="hero__card-top">
-              <span className="hero__card-live">
-                <i /> Now analysing
-              </span>
-              <span>B90 · Najdorf</span>
-            </div>
-            <div className="hero__card-body">
-              <div>
-                <span className="hero__card-k">Evaluation</span>
-                <b>+0.42</b>
-              </div>
-              <div>
-                <span className="hero__card-k">Accuracy</span>
-                <b>92.4%</b>
-              </div>
-              <div>
-                <span className="hero__card-k">Turning point</span>
-                <b>16…d×e4</b>
-              </div>
-            </div>
-            <div className="hero__card-bar" aria-hidden="true">
-              <i style={{ width: "58%" }} />
-            </div>
-          </aside>
         </div>
 
         <div className="hero__foot">

@@ -406,47 +406,36 @@ export function WaterPiece3D({
 
     const { colorMap, normalMap, roughnessMap } = createWaterTextures();
 
+    const isIvory = kind === "queen" || kind === "bishop";
     const waterMat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#dff7ff"),
-      map: colorMap,
-      normalMap,
-      normalScale: new THREE.Vector2(0.65, 0.65),
+      color: new THREE.Color(isIvory ? "#f4f0e8" : "#1a110d"),
+      bumpMap: normalMap,
+      bumpScale: 0.014,
       roughnessMap,
-      metalness: 0.0,
-      roughness: 0.12,
-      transmission: 0.86,
-      ior: 1.333,
-      thickness: 1.8,
+      metalness: 0.04,
+      roughness: isIvory ? 0.14 : 0.18,
       clearcoat: 1.0,
       clearcoatRoughness: 0.06,
-      attenuationColor: new THREE.Color("#0284c7"),
-      attenuationDistance: 1.5,
-      iridescence: 0.42,
-      iridescenceIOR: 1.333,
-      iridescenceThicknessRange: [120, 420],
-      sheen: 0.35,
-      sheenColor: new THREE.Color("#7dd3fc"),
-      envMapIntensity: 1.5,
+      envMapIntensity: isIvory ? 1.25 : 1.15,
     });
 
     const bubbleMat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#f0fdff"),
-      metalness: 0.0,
-      roughness: 0.02,
-      opacity: 0.58,
-      transparent: true,
+      color: new THREE.Color(isIvory ? "#fff8ed" : "#ff6b3d"),
+      metalness: 0.05,
+      roughness: 0.12,
+      clearcoat: 1.0,
     });
 
-    const keyLight = new THREE.DirectionalLight("#e8f8ff", 2.2);
+    const keyLight = new THREE.DirectionalLight("#fff7ed", 2.4);
     keyLight.position.set(2.8, 4.2, 3.6);
     scene.add(keyLight);
 
-    const rimLight = new THREE.PointLight("#38bdf8", 3.5, 14);
-    rimLight.position.set(-2.6, 1.8, -2.4);
+    const rimLight = new THREE.PointLight("#ff4214", 5.2, 14);
+    rimLight.position.set(-2.4, 1.4, -1.8);
     scene.add(rimLight);
 
-    const bounceLight = new THREE.PointLight("#2dd4bf", 1.8, 12);
-    bounceLight.position.set(1.6, -2.2, 2.0);
+    const bounceLight = new THREE.PointLight("#cbd5e1", 1.4, 12);
+    bounceLight.position.set(1.8, -1.6, 2.4);
     scene.add(bounceLight);
 
     const group = new THREE.Group();
