@@ -32,15 +32,14 @@ function createChessboardTextures(): {
   for (let row = 0; row < tiles; row++) {
     for (let col = 0; col < tiles; col++) {
       const isLight = (row + col) % 2 === 0;
-      cCtx.fillStyle = isLight ? "#d8d3c8" : "#0d0d0d";
+      cCtx.fillStyle = isLight ? "#d8d3c8" : "#0b0b0b";
       cCtx.fillRect(col * tilePx, row * tilePx, tilePx, tilePx);
 
-      rCtx.fillStyle = isLight ? "#444444" : "#262626";
+      rCtx.fillStyle = isLight ? "#363636" : "#1a1a1a";
       rCtx.fillRect(col * tilePx, row * tilePx, tilePx, tilePx);
     }
   }
 
-  // Subtle stone/marble micro-grain
   const cImg = cCtx.getImageData(0, 0, size, size);
   for (let i = 0; i < cImg.data.length; i += 4) {
     const n = ((Math.sin(i * 0.017) + Math.cos(i * 0.031)) * 4) | 0;
@@ -53,69 +52,72 @@ function createChessboardTextures(): {
   const map = new THREE.CanvasTexture(colorCanvas);
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(3, 3);
+  map.repeat.set(1.4, 1.4);
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = 8;
 
   const roughnessMap = new THREE.CanvasTexture(roughCanvas);
   roughnessMap.wrapS = THREE.RepeatWrapping;
   roughnessMap.wrapT = THREE.RepeatWrapping;
-  roughnessMap.repeat.set(3, 3);
+  roughnessMap.repeat.set(1.4, 1.4);
 
   return { map, roughnessMap };
 }
 
-function createMicroGrainTextures(): {
-  bumpMap: THREE.CanvasTexture;
-  roughnessMap: THREE.CanvasTexture;
-} {
+function createWaterNormalMap(): THREE.CanvasTexture {
   const size = 256;
-  const bCanvas = document.createElement("canvas");
-  bCanvas.width = size;
-  bCanvas.height = size;
-  const bCtx = bCanvas.getContext("2d")!;
-  const bImg = bCtx.createImageData(size, size);
+  const tau = Math.PI * 2;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  const img = ctx.createImageData(size, size);
 
-  const rCanvas = document.createElement("canvas");
-  rCanvas.width = size;
-  rCanvas.height = size;
-  const rCtx = rCanvas.getContext("2d")!;
-  const rImg = rCtx.createImageData(size, size);
+  const hAt = (u: number, v: number) => {
+    const x = u * tau;
+    const y = v * tau;
+    return (
+      Math.sin(x * 3 + Math.cos(y * 2)) * 0.45 +
+      Math.cos(y * 4 - Math.sin(x * 3)) * 0.35 +
+      Math.sin((x + y) * 5) * 0.14 +
+      Math.cos((x * 2 - y * 3) * 2) * 0.06
+    );
+  };
 
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const idx = (y * size + x) * 4;
-      const streak =
-        Math.sin((y / size) * Math.PI * 24 + Math.sin((x / size) * Math.PI * 6) * 0.8) * 0.5 +
-        Math.cos((x / size) * Math.PI * 8) * 0.3;
-      const val = Math.round(THREE.MathUtils.clamp(128 + streak * 45, 40, 220));
-      bImg.data[idx] = val;
-      bImg.data[idx + 1] = val;
-      bImg.data[idx + 2] = val;
-      bImg.data[idx + 3] = 255;
+  const eps = 1 / size;
+  const strength = 2.4;
 
-      const rVal = Math.round(THREE.MathUtils.clamp(44 + streak * 18, 20, 95));
-      rImg.data[idx] = rVal;
-      rImg.data[idx + 1] = rVal;
-      rImg.data[idx + 2] = rVal;
-      rImg.data[idx + 3] = 255;
+  for (let py = 0; py < size; py++) {
+    const v = py / size;
+    for (let px = 0; px < size; px++) {
+      const u = px / size;
+      const hx = hAt(u + eps, v) - hAt(u - eps, v);
+      const hy = hAt(u, v + eps) - hAt(u, v - eps);
+
+      let nx = -hx * strength;
+      let ny = -hy * strength;
+      let nz = 1.0;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      nx /= len;
+      ny /= len;
+      nz /= len;
+
+      const idx = (py * size + px) * 4;
+      img.data[idx] = Math.round((nx * 0.5 + 0.5) * 255);
+      img.data[idx + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      img.data[idx + 2] = Math.round((nz * 0.5 + 0.5) * 255);
+      img.data[idx + 3] = 255;
     }
   }
 
-  bCtx.putImageData(bImg, 0, 0);
-  rCtx.putImageData(rImg, 0, 0);
-
-  const bumpMap = new THREE.CanvasTexture(bCanvas);
-  bumpMap.wrapS = THREE.RepeatWrapping;
-  bumpMap.wrapT = THREE.RepeatWrapping;
-  bumpMap.repeat.set(2, 2);
-
-  const roughnessMap = new THREE.CanvasTexture(rCanvas);
-  roughnessMap.wrapS = THREE.RepeatWrapping;
-  roughnessMap.wrapT = THREE.RepeatWrapping;
-  roughnessMap.repeat.set(2, 2);
-
-  return { bumpMap, roughnessMap };
+  ctx.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(1, 2);
+  tex.colorSpace = THREE.NoColorSpace;
+  tex.needsUpdate = true;
+  return tex;
 }
 
 function createGlowTexture(stops: Array<[number, string]>): THREE.CanvasTexture {
@@ -203,10 +205,8 @@ function buildQueen(mat: THREE.Material, disposables: THREE.BufferGeometry[]): T
   bodyMesh.receiveShadow = true;
   g.add(bodyMesh);
 
-  // 6 flared porcelain crown prongs + smooth orb tips
-  const prongCount = 6;
-  for (let i = 0; i < prongCount; i++) {
-    const a = (i / prongCount) * Math.PI * 2;
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
     const prongGeo = new THREE.CylinderGeometry(0.042, 0.068, 0.28, 18);
     const tipGeo = new THREE.SphereGeometry(0.062, 20, 20);
     disposables.push(prongGeo, tipGeo);
@@ -260,68 +260,77 @@ export function HeroScene3D() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.18;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     host.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#000000");
-    scene.fog = new THREE.FogExp2(0x000000, 0.115);
+    scene.fog = new THREE.FogExp2(0x000000, 0.24);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
     const envTarget = pmrem.fromScene(new RoomEnvironment(), 0.04);
     scene.environment = envTarget.texture;
 
-    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 40);
-    const baseCamPos = new THREE.Vector3(0, 1.35, 6.2);
-    const lookTarget = new THREE.Vector3(0, 0.92, 0);
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 30);
+    const baseCamPos = new THREE.Vector3(0, 1.25, 5.15);
+    const lookTarget = new THREE.Vector3(0, 1.18, 0);
     camera.position.copy(baseCamPos);
     camera.lookAt(lookTarget);
 
-    // Reflective chessboard floor
+    // Wet water ripple normal map shared across pieces & floor
+    const waterNormal = createWaterNormalMap();
+    textures.push(waterNormal);
+
+    // Wet reflective chessboard floor
     const boardTex = createChessboardTextures();
     textures.push(boardTex.map, boardTex.roughnessMap);
     const boardMat = new THREE.MeshPhysicalMaterial({
       map: boardTex.map,
       roughnessMap: boardTex.roughnessMap,
-      roughness: 0.24,
-      metalness: 0.08,
-      clearcoat: 0.65,
-      clearcoatRoughness: 0.18,
-      envMapIntensity: 0.9,
+      normalMap: waterNormal,
+      normalScale: new THREE.Vector2(0.12, 0.12),
+      roughness: 0.12,
+      metalness: 0.06,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.08,
+      envMapIntensity: 1.1,
     });
     materials.push(boardMat);
 
-    const boardGeo = new THREE.PlaneGeometry(16, 16);
+    const boardGeo = new THREE.PlaneGeometry(14, 14);
     disposables.push(boardGeo);
     const board = new THREE.Mesh(boardGeo, boardMat);
     board.rotation.x = -Math.PI / 2;
     board.receiveShadow = true;
     scene.add(board);
 
-    // Micro-grain textures for obsidian King & porcelain Queen
-    const grain = createMicroGrainTextures();
-    textures.push(grain.bumpMap, grain.roughnessMap);
-
+    // Deep obsidian-espresso wet water-reflective King
     const kingMat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#1a100c"),
-      bumpMap: grain.bumpMap,
-      bumpScale: 0.015,
-      roughnessMap: grain.roughnessMap,
-      roughness: 0.18,
-      metalness: 0.06,
+      color: new THREE.Color("#1b0e09"),
+      normalMap: waterNormal,
+      normalScale: new THREE.Vector2(0.28, 0.28),
+      roughness: 0.05,
+      metalness: 0.08,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.07,
-      envMapIntensity: 1.1,
+      clearcoatRoughness: 0.03,
+      iridescence: 0.22,
+      iridescenceIOR: 1.333,
+      envMapIntensity: 1.8,
     });
+
+    // Luminous pearl-ivory wet water-reflective Queen
     const queenMat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color("#f4f0e8"),
-      roughnessMap: grain.roughnessMap,
-      roughness: 0.13,
+      color: new THREE.Color("#f4efe6"),
+      normalMap: waterNormal,
+      normalScale: new THREE.Vector2(0.25, 0.25),
+      roughness: 0.05,
       metalness: 0.0,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      envMapIntensity: 1.25,
+      clearcoatRoughness: 0.03,
+      iridescence: 0.35,
+      iridescenceIOR: 1.333,
+      envMapIntensity: 1.9,
     });
     materials.push(kingMat, queenMat);
 
@@ -334,15 +343,15 @@ export function HeroScene3D() {
     queen.rotation.set(0.08, 0.22, -0.6);
     scene.add(queen);
 
-    // Studio backlight beam & fiery ember rim glow planes
+    // Chiaroscuro backlight column + fiery orange-red ember rim glow
     const backBeamTex = createGlowTexture([
-      [0, "rgba(255, 245, 232, 0.44)"],
-      [0.42, "rgba(215, 210, 200, 0.14)"],
+      [0, "rgba(255, 245, 232, 0.56)"],
+      [0.42, "rgba(215, 210, 200, 0.18)"],
       [1, "rgba(0, 0, 0, 0)"],
     ]);
     const emberTex = createGlowTexture([
-      [0, "rgba(255, 61, 18, 0.65)"],
-      [0.45, "rgba(255, 61, 18, 0.22)"],
+      [0, "rgba(255, 58, 16, 0.78)"],
+      [0.45, "rgba(255, 58, 16, 0.26)"],
       [1, "rgba(0, 0, 0, 0)"],
     ]);
     textures.push(backBeamTex, emberTex);
@@ -361,31 +370,30 @@ export function HeroScene3D() {
     });
     materials.push(beamMat, emberMat);
 
-    const beamGeo = new THREE.PlaneGeometry(8, 9);
-    const emberGeo = new THREE.PlaneGeometry(5.5, 5.5);
+    const beamGeo = new THREE.PlaneGeometry(7.5, 8.5);
+    const emberGeo = new THREE.PlaneGeometry(5, 5);
     disposables.push(beamGeo, emberGeo);
 
     const beamPlane = new THREE.Mesh(beamGeo, beamMat);
-    beamPlane.position.set(-0.15, 3.2, -2.8);
+    beamPlane.position.set(-0.1, 2.5, -1.9);
     scene.add(beamPlane);
 
     const emberPlane = new THREE.Mesh(emberGeo, emberMat);
-    emberPlane.position.set(-1.1, 1.1, -1.1);
+    emberPlane.position.set(-0.9, 0.95, -0.8);
     scene.add(emberPlane);
 
-    // Chiaroscuro lights
-    const keySpot = new THREE.SpotLight("#fff7ed", 28, 22, Math.PI / 4.2, 0.65, 1.4);
-    keySpot.position.set(1.4, 6.2, 3.2);
+    const keySpot = new THREE.SpotLight("#fff7ed", 34, 22, Math.PI / 4.2, 0.65, 1.4);
+    keySpot.position.set(1.4, 5.8, 3.0);
     keySpot.castShadow = true;
     keySpot.shadow.mapSize.set(1024, 1024);
     keySpot.shadow.bias = -0.0005;
     scene.add(keySpot);
 
-    const emberRim = new THREE.PointLight("#ff4214", 18, 10);
-    emberRim.position.set(-1.8, 1.3, 0.4);
+    const emberRim = new THREE.PointLight("#ff3a10", 26, 10);
+    emberRim.position.set(-1.6, 1.2, 0.5);
     scene.add(emberRim);
 
-    const coolFill = new THREE.DirectionalLight("#cbd5e1", 0.55);
+    const coolFill = new THREE.DirectionalLight("#cbd5e1", 0.65);
     coolFill.position.set(3, 2, 4);
     scene.add(coolFill);
 
@@ -414,13 +422,18 @@ export function HeroScene3D() {
 
     let inView = true;
     let rafId = 0;
+    const startTime = performance.now();
+
     const renderFrame = () => {
+      const t = (performance.now() - startTime) * 0.001;
       if (!reducedMotion) {
-        const targetX = baseCamPos.x + pointerX * 0.42;
-        const targetY = baseCamPos.y - pointerY * 0.18;
+        const targetX = baseCamPos.x + pointerX * 0.36;
+        const targetY = baseCamPos.y - pointerY * 0.16;
         camera.position.x += (targetX - camera.position.x) * 0.06;
         camera.position.y += (targetY - camera.position.y) * 0.06;
         camera.lookAt(lookTarget);
+        waterNormal.offset.y = t * 0.045;
+        waterNormal.offset.x = Math.sin(t * 0.25) * 0.025;
       }
       renderer.render(scene, camera);
     };
