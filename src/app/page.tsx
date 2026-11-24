@@ -217,59 +217,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* --------------------------------------------------- thesis */}
-      <section className="section thesis">
-        <div className="wrap">
-          <div className="thesis__grid">
-            <div className="thesis__art" aria-hidden="true">
-              <span className="thesis__halo" />
-              <div className="thesis__piece thesis__piece--a">
-                <PieceArt kind="queen" material="water" glow />
-              </div>
-              <div className="thesis__piece thesis__piece--b">
-                <PieceArt kind="knight" material="water" />
-              </div>
-            </div>
-
-            <div className="thesis__copy">
-              <span className="chip">
-                <i /> Quietly powerful by design
-              </span>
-              <h2 className="display-md">
-                Chess that respects
-                <br />
-                <span className="serif">your attention.</span>
-              </h2>
-              <p>
-                Analysis belongs close to the board. ChessLab runs on your desktop, keeps your
-                games in a local database, and never asks you to sign in to understand your own
-                chess.
-              </p>
-              <ul className="thesis__points">
-                <li>
-                  <b>No cloud account</b>
-                  <span>Your library lives in a local SQLite file you own.</span>
-                </li>
-                <li>
-                  <b>No telemetry</b>
-                  <span>Nothing leaves the machine unless you export it.</span>
-                </li>
-                <li>
-                  <b>No subscription</b>
-                  <span>One app, one engine, no recurring plans.</span>
-                </li>
-              </ul>
-              <Link className="btn-pill btn-pill--outline" href="/studio">
-                Explore the studio
-                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

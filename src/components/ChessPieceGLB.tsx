@@ -20,7 +20,7 @@ export type PieceVariant =
 export const HERO_3D_TUNING = {
   SWIRL_PALETTE: {
     king: ["#2fd0c8", "#7a5cff", "#f472b6", "#eab308", "#1d4ed8"] as const,
-    queen: ["#c9825f", "#ff7eb6", "#ff6b2c", "#ffd7ba", "#a35238"] as const,
+    queen: ["#0284c7", "#38bdf8", "#7dd3fc", "#bae6fd", "#e0f2fe"] as const,
     crimsonBlue: ["#1d4ed8", "#3b82f6", "#60a5fa", "#dc2626", "#f87171"] as const,
   },
   DISTORTION: {
@@ -331,9 +331,13 @@ export function ChessPieceGLB({
               <MeshTransmissionMaterial
                 ref={transMatRef}
                 transmission={1}
-                thickness={1.5}
-                roughness={0.04}
-                ior={1.5}
+                transparent
+                opacity={0.78}
+                thickness={0.75}
+                roughness={0.02}
+                ior={1.38}
+                attenuationColor="#bae6fd"
+                attenuationDistance={2.8}
                 chromaticAberration={0.06}
                 anisotropicBlur={0.2}
                 distortion={HERO_3D_TUNING.DISTORTION.baseDistortion}
@@ -368,21 +372,28 @@ export function ChessPieceGLB({
                 envMapIntensity={2.6}
               />
             ) : (
-              <meshPhysicalMaterial
-                color="#df9a78"
-                metalness={0.75}
-                roughness={0.08}
-                clearcoat={1}
-                clearcoatRoughness={0.04}
-                transmission={0.25}
-                thickness={0.8}
-                ior={1.5}
-                iridescence={0.85}
-                iridescenceIOR={1.5}
-                iridescenceThicknessRange={[180, 760]}
+              <MeshTransmissionMaterial
+                color="#7dd3fc"
+                attenuationColor="#38bdf8"
+                attenuationDistance={2.4}
+                transmission={1}
+                transparent
+                opacity={0.8}
+                thickness={0.85}
+                roughness={0.03}
+                ior={1.4}
+                chromaticAberration={0.05}
+                iridescence={0.9}
+                iridescenceIOR={1.45}
+                iridescenceThicknessRange={[140, 760]}
                 iridescenceThicknessMap={iridescenceMap}
+                clearcoat={1}
+                clearcoatRoughness={0.03}
                 map={colorMap}
-                envMapIntensity={1.5}
+                envMapIntensity={1.6}
+                backside
+                samples={4}
+                resolution={256}
               />
             )}
           </mesh>

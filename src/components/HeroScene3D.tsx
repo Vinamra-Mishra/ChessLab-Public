@@ -404,7 +404,7 @@ export function HeroScene3D() {
           <ChessPieceGLB
             kind="king"
             variant="marbled-king"
-            scale={2.4}
+            scale={1.95}
             position={[0.65, 0, -0.25]}
             pointerRef={pointerRef}
             rotDamping={0.055}
@@ -415,8 +415,8 @@ export function HeroScene3D() {
           <ChessPieceGLB
             kind="queen"
             variant="copper-queen"
-            scale={2.0}
-            position={[1.28, 0.12, 0.25]}
+            scale={1.65}
+            position={[1.18, 0.1, 0.22]}
             rotation={[0.04, 0.22, -0.42]}
             pointerRef={pointerRef}
             rotDamping={0.095}

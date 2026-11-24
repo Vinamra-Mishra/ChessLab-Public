@@ -3777,6 +3777,9 @@ img {
 ================================================================== */
 .hero.hero--image-a {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   min-height: calc(100vh - 72px);
   overflow: hidden;
   background: #000000;
@@ -3932,6 +3935,7 @@ img {
 }
 
 .hero--image-a .hero__foot {
+  margin-top: auto;
   background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
 }
 
@@ -3981,7 +3985,7 @@ img {
 }
 
 .mode__art .piece-water-3d {
-  width: min(62%, 172px);
+  width: min(46%, 126px);
   filter: drop-shadow(0 24px 28px rgba(0, 0, 0, 0.9));
   transition: transform 420ms var(--ease);
 }
@@ -3991,24 +3995,24 @@ img {
 }
 
 .pillar__art .piece-water-3d {
-  width: min(52%, 150px);
+  width: min(40%, 118px);
   filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.9));
 }
 
 .anatomy__art .piece-water-3d {
   position: relative;
   z-index: 2;
-  width: min(46%, 184px);
+  width: min(36%, 144px);
   filter: drop-shadow(0 26px 32px rgba(0, 0, 0, 0.92));
 }
 
 .panel__art .piece-water-3d {
-  width: min(50%, 144px);
+  width: min(40%, 116px);
   filter: drop-shadow(0 20px 26px rgba(0, 0, 0, 0.9));
 }
 
 .role__art .piece-water-3d {
-  width: min(48%, 134px);
+  width: min(38%, 110px);
   filter: drop-shadow(0 20px 26px rgba(0, 0, 0, 0.9));
 }
 

@@ -41,7 +41,7 @@ function HoverTiltPiece({
 
   return (
     <group ref={groupRef}>
-      <ChessPieceGLB kind={kind} variant="crimson-blue" scale={1.56} position={[0, -0.76, 0]} />
+      <ChessPieceGLB kind={kind} variant="crimson-blue" scale={1.18} position={[0, -0.58, 0]} />
     </group>
   );
 }
