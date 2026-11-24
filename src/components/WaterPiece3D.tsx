@@ -16,17 +16,17 @@ interface HoverState {
 function HoverTiltPiece({
   kind,
   hoverRef,
-  reducedMotion,
+  reducedMotionRef,
 }: {
   kind: PieceKind;
   hoverRef: React.MutableRefObject<HoverState>;
-  reducedMotion: boolean;
+  reducedMotionRef: React.MutableRefObject<boolean>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { invalidate } = useThree();
 
   useFrame(() => {
-    if (reducedMotion || !groupRef.current) return;
+    if (reducedMotionRef.current || !groupRef.current) return;
     const h = hoverRef.current;
     const targetY = h.active ? h.x * 0.24 : 0;
     const targetX = h.active ? h.y * 0.12 : 0;
@@ -57,11 +57,11 @@ export function WaterPiece3D({
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const hoverRef = useRef<HoverState>({ x: 0, y: 0, active: false });
+  const reducedMotionRef = useRef(false);
   const [inView, setInView] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const host = hostRef.current;
     if (!host) return;
     const io = new IntersectionObserver(
@@ -73,7 +73,7 @@ export function WaterPiece3D({
   }, []);
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (reducedMotion || !hostRef.current) return;
+    if (reducedMotionRef.current || !hostRef.current) return;
     const rect = hostRef.current.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     hoverRef.current = {
@@ -158,7 +158,7 @@ export function WaterPiece3D({
           <pointLight position={[2.2, -0.5, 2.2]} intensity={20} color="#3b82f6" />
 
           <Suspense fallback={null}>
-            <HoverTiltPiece kind={kind} hoverRef={hoverRef} reducedMotion={reducedMotion} />
+            <HoverTiltPiece kind={kind} hoverRef={hoverRef} reducedMotionRef={reducedMotionRef} />
           </Suspense>
         </Canvas>
       ) : null}
