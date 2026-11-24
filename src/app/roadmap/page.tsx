@@ -92,13 +92,13 @@ export default function RoadmapPage() {
 
           <div className="rm-hero__art" aria-hidden="true">
             <div className="rm-hero__piece rm-hero__piece--a">
-              <PieceArt kind="king" material="obsidian" glow />
+              <PieceArt kind="king" material="water" glow />
             </div>
             <div className="rm-hero__piece rm-hero__piece--b">
-              <PieceArt kind="bishop" material="ivory" />
+              <PieceArt kind="bishop" material="water" />
             </div>
             <div className="rm-hero__piece rm-hero__piece--c">
-              <PieceArt kind="rook" material="chrome" />
+              <PieceArt kind="rook" material="water" />
             </div>
           </div>
 

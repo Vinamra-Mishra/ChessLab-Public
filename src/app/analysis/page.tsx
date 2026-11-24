@@ -277,7 +277,7 @@ export default function AnalysisPage() {
               <article className="panel" key={panel.num}>
                 <span className="panel__num">{panel.num}</span>
                 <div className="panel__art" aria-hidden="true">
-                  <PieceArt kind={panel.piece} material={panel.material} />
+                  <PieceArt kind={panel.piece} material="water" />
                 </div>
                 <h3>{panel.title}</h3>
                 <p>{panel.copy}</p>

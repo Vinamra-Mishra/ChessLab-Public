@@ -38,13 +38,13 @@ export default function NotFound() {
 
       <div className="notfound__art" aria-hidden="true">
         <div className="notfound__piece notfound__piece--a">
-          <PieceArt kind="king" material="obsidian" glow />
+          <PieceArt kind="king" material="water" glow />
         </div>
         <div className="notfound__piece notfound__piece--b">
-          <PieceArt kind="queen" material="ivory" />
+          <PieceArt kind="queen" material="water" />
         </div>
         <div className="notfound__piece notfound__piece--c">
-          <PieceArt kind="rook" material="ember" />
+          <PieceArt kind="rook" material="water" />
         </div>
       </div>
     </div>

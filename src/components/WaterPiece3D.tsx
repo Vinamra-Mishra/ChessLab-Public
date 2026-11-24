@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
@@ -16,8 +16,23 @@ export function WaterPiece3D({
   className?: string;
   label?: string;
 }) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const io = new IntersectionObserver(
+      (entries) => setInView(entries.some((e) => e.isIntersecting)),
+      { threshold: 0.01 }
+    );
+    io.observe(host);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div
+      ref={hostRef}
       className={`piece-water-3d${className ? ` ${className}` : ""}`}
       role={label ? "img" : undefined}
       aria-label={label}
@@ -26,6 +41,7 @@ export function WaterPiece3D({
       data-piece={kind}
     >
       <Canvas
+        frameloop={inView ? "always" : "never"}
         dpr={[1, 2]}
         gl={{
           alpha: true,

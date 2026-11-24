@@ -3933,3 +3933,26 @@ img {
 .hero--image-a .hero__foot {
   background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
 }
+
+/* Move stats card to top-right replacing 01/02 pills, with higher opacity */
+.hero--image-a .hero__card {
+  position: absolute;
+  top: clamp(88px, 12vh, 144px);
+  right: var(--gutter);
+  bottom: auto;
+  left: auto;
+  z-index: 6;
+  background: rgba(12, 12, 16, 0.9);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.68);
+}
+
+@media (max-width: 960px) {
+  .hero--image-a .hero__card {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 24px;
+  }
+}

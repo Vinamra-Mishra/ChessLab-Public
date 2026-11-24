@@ -125,10 +125,10 @@ export default function StudioPage() {
             studio · workspace
           </span>
           <div className="studio-hero__piece studio-hero__piece--tall">
-            <PieceArt kind="king" material="ivory" glow label="Ivory king under ember light" />
+            <PieceArt kind="king" material="water" glow label="3D chess king" />
           </div>
           <div className="studio-hero__piece studio-hero__piece--small">
-            <PieceArt kind="pawn" material="obsidian" />
+            <PieceArt kind="pawn" material="water" />
           </div>
           <span className="studio-hero__caption" aria-hidden="true">
             <b>Untitled session</b>
@@ -162,7 +162,7 @@ export default function StudioPage() {
               <article className="pillar" key={pillar.num}>
                 <span className="pillar__num">{pillar.num}</span>
                 <div className="pillar__art">
-                  <PieceArt kind={pillar.piece} material={pillar.material} />
+                  <PieceArt kind={pillar.piece} material="water" />
                 </div>
                 <h3 className="display-sm">{pillar.title}</h3>
                 <p>{pillar.copy}</p>
@@ -189,7 +189,7 @@ export default function StudioPage() {
                   <span className="anatomy__index" aria-hidden="true">
                     0{index + 1}
                   </span>
-                  <PieceArt kind={surface.piece} material={surface.material} />
+                  <PieceArt kind={surface.piece} material="water" />
                 </div>
                 <div className="anatomy__body">
                   <span className="anatomy__meta">{surface.meta}</span>
@@ -212,7 +212,7 @@ export default function StudioPage() {
             {SURFACES.map((surface, index) => (
               <article className="anatomy__row" key={surface.title}>
                 <div className="anatomy__art" data-flip={index % 2 === 1}>
-                  <PieceArt kind={surface.piece} material={surface.material} />
+                  <PieceArt kind={surface.piece} material="water" />
                 </div>
                 <div className="anatomy__body">
                   <span className="anatomy__meta">{surface.meta}</span>

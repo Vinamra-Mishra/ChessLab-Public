@@ -119,9 +119,9 @@ function createBoardSurfaceTextures(): {
   for (let row = 0; row < cells; row++) {
     for (let col = 0; col < cells; col++) {
       const light = (row + col) % 2 === 0;
-      cCtx.fillStyle = light ? "#1e1e26" : "#08080b";
+      cCtx.fillStyle = light ? "#d8d4cc" : "#0a0a0d";
       cCtx.fillRect(col * step, row * step, step, step);
-      rCtx.fillStyle = light ? "#3d3d42" : "#222228";
+      rCtx.fillStyle = light ? "#48484c" : "#222228";
       rCtx.fillRect(col * step, row * step, step, step);
     }
   }
@@ -173,7 +173,7 @@ function GeometriaBoard({ isMobile }: { isMobile: boolean }) {
           blur={[300, 100]}
           resolution={isMobile ? 256 : 512}
           mixBlur={1}
-          mixStrength={0.65}
+          mixStrength={0.62}
           roughness={0.28}
           depthScale={1}
           minDepthThreshold={0.4}

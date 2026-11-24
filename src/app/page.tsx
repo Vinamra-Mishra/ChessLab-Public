@@ -3,11 +3,6 @@ import { HeroInteractive } from "@/components/HeroInteractive";
 import { HeroScene3D } from "@/components/HeroScene3D";
 import { PieceArt, PieceDefs } from "@/components/Pieces";
 
-const HERO_BULLETS = [
-  { num: "01", label: "AI-powered training" },
-  { num: "02", label: "Competitive rankings" },
-];
-
 const MODES = [
   {
     num: "01",
@@ -92,15 +87,6 @@ export default function Home() {
               </Link>
             </div>
           </div>
-
-          <ul className="hero__stack" aria-label="Highlights">
-            {HERO_BULLETS.map((item) => (
-              <li key={item.num} data-spotlight>
-                <span>{item.num}</span>
-                <b>{item.label}</b>
-              </li>
-            ))}
-          </ul>
 
           <span className="hero__spec hero__spec--left" aria-hidden="true">
             sicilian · b90

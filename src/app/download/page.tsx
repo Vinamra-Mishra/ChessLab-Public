@@ -215,13 +215,13 @@ export default function DownloadPage() {
             <div className="box__art" aria-hidden="true">
               <span className="box__ring" />
               <div className="box__piece box__piece--a">
-                <PieceArt kind="rook" material="ivory" glow />
+                <PieceArt kind="rook" material="water" glow />
               </div>
               <div className="box__piece box__piece--b">
-                <PieceArt kind="knight" material="obsidian" />
+                <PieceArt kind="knight" material="water" />
               </div>
               <div className="box__piece box__piece--c">
-                <PieceArt kind="pawn" material="ember" />
+                <PieceArt kind="pawn" material="water" />
               </div>
             </div>
           </div>

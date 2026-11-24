@@ -104,7 +104,7 @@ export default function TournamentsPage() {
             <span className="tour-hero__row">
               <span className="stroke-type">rankings</span>
               <span className="tour-hero__art" aria-hidden="true">
-                <PieceArt kind="rook" material="ivory" glow />
+                <PieceArt kind="rook" material="water" glow />
               </span>
             </span>
           </h1>
@@ -249,7 +249,7 @@ export default function TournamentsPage() {
             {ROLES.map((role) => (
               <article className="role" key={role.title}>
                 <div className="role__art" aria-hidden="true">
-                  <PieceArt kind={role.piece} material={role.material} />
+                  <PieceArt kind={role.piece} material="water" />
                 </div>
                 <h3 className="display-sm">{role.title}</h3>
                 <p>{role.copy}</p>
