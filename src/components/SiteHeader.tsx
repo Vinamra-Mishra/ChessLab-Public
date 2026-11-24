@@ -73,7 +73,7 @@ export function SiteHeader() {
               </svg>
               <span>Watch video</span>
             </Link>
-            <Link className="btn-pill btn-pill--light btn-pill--sm" href="/download">
+            <Link className="btn-pill btn-pill--light btn-pill--sm" href="/download" data-magnetic data-spotlight>
               Get access
             </Link>
             <button

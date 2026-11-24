@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HeroInteractive } from "@/components/HeroInteractive";
 import { HeroScene3D } from "@/components/HeroScene3D";
 import { PieceArt, PieceDefs } from "@/components/Pieces";
 
@@ -43,43 +44,96 @@ export default function Home() {
       <PieceDefs />
 
       {/* ---------------------------------------------- cinematic hero */}
-      <section className="hero hero--cinematic">
+      <section className="hero hero--image-a">
+        <HeroInteractive />
+        <div className="hero__glows" aria-hidden="true">
+          <span className="hero__glow hero__glow--left" />
+          <span className="hero__glow hero__glow--right" />
+          <span className="hero__grain" />
+        </div>
+
         <HeroScene3D />
 
-        <div className="hero-cine__wrap">
-          <div className="hero-cine__top">
-            <h1 className="hero-cine__title">
-              <span className="hero-cine__left rise">MASTER AI</span>
-              <span className="hero-cine__right rise-2">CHESS</span>
+        <div className="hero__inner">
+          <div className="hero__copy">
+            <p className="eyebrow rise">
+              <span className="eyebrow__num">(</span> Offline-first chess studio{" "}
+              <span className="eyebrow__num">)</span>
+            </p>
+
+            <h1 className="hero__title">
+              <span className="hero__line rise">Master</span>
+              <span className="hero__line hero__line--aside rise-2">
+                <span className="hero__line-alt">The</span>
+                <span className="hero__rule" aria-hidden="true" />
+              </span>
+              <span className="hero__line rise-3">
+                <span className="stroke-type">Chess</span>
+              </span>
             </h1>
-          </div>
 
-          <div className="hero-cine__mid">
-            <div className="hero-cine__leftcol">
-              <p className="hero__lede rise-3">
-                Turn your chess vision into true mastery with intelligent, results-focused
-                analysis — all on your own machine.
-              </p>
+            <p className="hero__lede rise-3">
+              Turn your chess vision into true mastery with intelligent, results-focused
+              analysis — all on your own machine.
+            </p>
 
-              <ul className="hero__stack rise-3" aria-label="Highlights">
-                {HERO_BULLETS.map((item) => (
-                  <li key={item.num}>
-                    <span>{item.num}/</span>
-                    <b>{item.label}</b>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="hero-cine__rightcol rise-3">
-              <Link className="btn-pill btn-pill--light" href="/download">
+            <div className="hero__actions rise-3">
+              <Link className="btn-pill btn-pill--light" href="/download" data-magnetic data-spotlight>
                 Play now
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+              <Link className="btn-pill btn-pill--outline" href="/studio" data-spotlight>
+                Watch the studio
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
             </div>
           </div>
+
+          <ul className="hero__stack" aria-label="Highlights">
+            {HERO_BULLETS.map((item) => (
+              <li key={item.num} data-spotlight>
+                <span>{item.num}</span>
+                <b>{item.label}</b>
+              </li>
+            ))}
+          </ul>
+
+          <span className="hero__spec hero__spec--left" aria-hidden="true">
+            sicilian · b90
+          </span>
+          <span className="hero__spec hero__spec--right" aria-hidden="true">
+            eval +0.42 · depth 34
+          </span>
+
+          <aside className="hero__card" aria-label="Sample review summary" data-spotlight>
+            <div className="hero__card-top">
+              <span className="hero__card-live">
+                <i /> Now analysing
+              </span>
+              <span>B90 · Najdorf</span>
+            </div>
+            <div className="hero__card-body">
+              <div>
+                <span className="hero__card-k">Evaluation</span>
+                <b>+0.42</b>
+              </div>
+              <div>
+                <span className="hero__card-k">Accuracy</span>
+                <b>92.4%</b>
+              </div>
+              <div>
+                <span className="hero__card-k">Turning point</span>
+                <b>16…d×e4</b>
+              </div>
+            </div>
+            <div className="hero__card-bar" aria-hidden="true">
+              <i style={{ width: "0%" }} />
+            </div>
+          </aside>
         </div>
 
         <div className="hero__foot">
@@ -90,7 +144,7 @@ export default function Home() {
             Scroll to explore
           </span>
           <span className="hero__foot-meta">
-            Windows · macOS · Linux <i /> Coming Soon
+            Windows · macOS · Linux <i /> Private beta
           </span>
         </div>
       </section>
@@ -100,8 +154,6 @@ export default function Home() {
         <div className="marquee__track">
           {Array.from({ length: 2 }).map((_, group) => (
             <span className="marquee__group" key={group}>
-              <span>Analysis</span>
-              <i>✳</i>
               <span>Review</span>
               <i>✳</i>
               <span>Repertoire</span>
@@ -109,6 +161,8 @@ export default function Home() {
               <span>Tournaments</span>
               <i>✳</i>
               <span>Rankings</span>
+              <i>✳</i>
+              <span>Analysis</span>
               <i>✳</i>
             </span>
           ))}
