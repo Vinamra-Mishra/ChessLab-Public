@@ -3,9 +3,9 @@ import Link from "next/link";
 import { PieceArt, PieceDefs, type PieceKind } from "@/components/Pieces";
 
 export const metadata: Metadata = {
-  title: "Analysis",
+  title: "Analysis & Game Review",
   description:
-    "Engine lines, evaluation, and phase-by-phase review. See why a move matters, not just that it does — with Stockfish 19 running locally.",
+    "MultiPV Stockfish 19 analysis board and Win-Probability game review with 11-tier move classification, interactive EvalGraph, Highlights filter, Retry Mistake, and Premiere-style dockable panes.",
 };
 
 const EVAL_LEGEND = [
@@ -13,21 +13,21 @@ const EVAL_LEGEND = [
     tag: "?!",
     tone: "inaccuracy",
     title: "Inaccuracy",
-    copy: "The position slips, but the thread is still there. Worth a note rather than a rewrite.",
+    copy: "A slight Win-Probability and Expected-Points slip across ChessLab's 11-tier classifier — worth noting without breaking momentum.",
     delta: "−0.4",
   },
   {
     tag: "?",
     tone: "mistake",
     title: "Mistake",
-    copy: "A concrete opportunity changes hands — usually a tactic that was one move away.",
+    copy: "A tactical or positional swing verified against Stockfish 19 principal variations, ready to practise with one-click Retry Mistake.",
     delta: "−1.2",
   },
   {
     tag: "??",
     tone: "blunder",
     title: "Blunder",
-    copy: "The game turns. ChessLab marks the exact move, the alternative, and the follow-up.",
+    copy: "The game-deciding turning point. ATHENA renders Red/Green coaching arrows, explains the verified concept, and shows the winning line.",
     delta: "−3.1",
   },
 ];
@@ -35,32 +35,32 @@ const EVAL_LEGEND = [
 const PANELS = [
   {
     num: "01",
-    title: "Evaluation, honestly",
-    copy: "A single bar, a numeric score, and the depth it was reached at — no invented accuracy percentages you cannot audit.",
+    title: "Inline Stockfish 19 tuning",
+    copy: "Configure Search Depth, MultiPV lines, CPU threads, and Hash memory inline — or toggle Auto: Play vs Stockfish directly from the dock.",
     piece: "bishop" as const,
     material: "ivory" as const,
   },
   {
     num: "02",
-    title: "Lines you can walk",
-    copy: "Step through the engine's principal variation move by move, and branch off whenever your idea differs.",
+    title: "Stockfish-verified diagnosis",
+    copy: "A 4-stage 16-concept classifier validates every tactical motif against Stockfish principal variations — 100% pass rate on anti-false-positive traps.",
     piece: "queen" as const,
     material: "chrome" as const,
   },
   {
     num: "03",
-    title: "Phases, not walls of text",
-    copy: "Opening, middlegame and endgame get separate notes, so the lesson arrives in the order a game does.",
+    title: "Premiere-style 3-pane dock",
+    copy: "Drag resizable splitters, swap board and evaluation columns, double-click to reset, and persist custom dock layouts locally across sessions.",
     piece: "rook" as const,
     material: "obsidian" as const,
   },
 ];
 
 const SAMPLE_MOVES: Array<{ ply: number; white: string; black: string; mark?: "in" | "mis" | "bl"; note: string }> = [
-  { ply: 10, white: "Be2", black: "O-O", note: "Castled, and the kingside stays intact." },
-  { ply: 12, white: "Qd2", black: "a6", mark: "in", note: "a6 is fine, but it concedes the centre for tempo." },
-  { ply: 14, white: "Rad1", black: "b5", mark: "mis", note: "The pawn push leaves c6 undefended." },
-  { ply: 16, white: "Ncxe4", black: "dxe4", mark: "bl", note: "Recapture drops the exchange — Bd3 first was needed." },
+  { ply: 10, white: "Be2", black: "O-O", note: "Book move — king tucked safely before central breaks." },
+  { ply: 12, white: "Qd2", black: "a6", mark: "in", note: "Wait-and-see wing move eases central tension slightly." },
+  { ply: 14, white: "Rad1", black: "b5", mark: "mis", note: "Loose c6 knight target — PV shows tactical pressure." },
+  { ply: 16, white: "Rxe7+", black: "dxe4", mark: "bl", note: "Decisive turning point. Show Best plays Rxe7+ with tempo." },
 ];
 
 const MARK_LABEL: Record<NonNullable<(typeof SAMPLE_MOVES)[number]["mark"]>, string> = {
@@ -83,16 +83,16 @@ function AnalysisBoard() {
   ];
 
   return (
-    <div className="aboard" aria-label="Analysis board mock-up">
+    <div className="aboard" aria-label="Analysis and review board mock-up">
       <div className="aboard__top">
         <span className="aboard__dots" aria-hidden="true">
           <i />
           <i />
           <i />
         </span>
-        <span>analysis — game 214</span>
+        <span>review — sicilian najdorf</span>
         <span className="aboard__live">
-          <i /> depth 34
+          <i /> MultiPV 2 · SF19
         </span>
       </div>
 
@@ -130,7 +130,7 @@ function AnalysisBoard() {
           <i style={{ width: "56%" }} />
         </span>
         <span className="aboard__best">
-          Best <b>Bd3</b>
+          Best <b>Rxe7+</b>
         </span>
       </div>
     </div>
@@ -145,27 +145,27 @@ export default function AnalysisPage() {
       <section className="analysis-hero">
         <div className="analysis-hero__copy">
           <p className="eyebrow">
-            <span className="eyebrow__num">(</span> Analysis{" "}
+            <span className="eyebrow__num">(</span> Analysis & Game Review{" "}
             <span className="eyebrow__num">)</span>
           </p>
           <h1 className="display-xl">
-            Read the
+            Stockfish 19
             <br />
-            <span className="serif analysis-hero__accent">whole</span> position
+            <span className="serif analysis-hero__accent">precision</span>
           </h1>
           <p className="analysis-hero__lede">
-            Stockfish tells you what it likes. ChessLab is built to show you why — move by
-            move, phase by phase, on your own hardware.
+            MultiPV Stockfish 19 search, Win-Probability accuracy, and PV-verified concept
+            diagnoses — including How to Improve debriefs even in games you won.
           </p>
           <div className="analysis-hero__actions">
             <Link className="btn-pill btn-pill--light" href="/download">
-              Try it on a game
+              See release status
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
-            <Link className="btn-pill btn-pill--outline" href="/studio">
-              How the studio works
+            <Link className="btn-pill btn-pill--outline" href="/athena">
+              Meet ATHENA
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M4 16 16 4M6.5 4H16v9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -184,17 +184,17 @@ export default function AnalysisPage() {
           <div className="section-head">
             <div>
               <p className="eyebrow">
-                <span className="eyebrow__num">01</span> Annotations
+                <span className="eyebrow__num">01</span> Review tiers
               </p>
               <h2 className="display-md">
-                Three degrees
+                Eleven tiers,
                 <br />
-                <span className="serif">of wrong.</span>
+                <span className="serif">honest accuracy.</span>
               </h2>
             </div>
             <p className="section-head__lede">
-              ChessLab names the size of a mistake instead of flattening everything into one
-              accuracy score.
+              Evaluated with ChessLab&apos;s Win-Probability and Expected-Points engine pass across
+              every phase — alongside Brilliant, Great, Best, Good, and Book moves.
             </p>
           </div>
 
@@ -217,19 +217,20 @@ export default function AnalysisPage() {
           <div className="moves">
             <div className="moves__copy">
               <p className="eyebrow">
-                <span className="eyebrow__num">02</span> The move list
+                <span className="eyebrow__num">02</span> Interactive move list
               </p>
               <h2 className="display-md">
-                Every turn,
+                Filter moments,
                 <br />
-                <span className="serif">accounted for.</span>
+                <span className="serif">retry mistakes.</span>
               </h2>
               <p>
-                Click any move to restore the board. The engine note stays attached to the
-                moment it belongs to, so a review reads like a game, not a spreadsheet.
+                Scrub the interactive EvalGraph, toggle Highlights to step strictly through
+                critical turning points, or hit Retry Mistake and Show Best with ATHENA coaching
+                bubbles attached to every key ply.
               </p>
-              <Link className="link-quiet" href="/tournaments">
-                See how tournaments are scored
+              <Link className="link-quiet" href="/athena">
+                Explore ATHENA Coach
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M4 16 16 4M6.5 4H16v9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -288,12 +289,12 @@ export default function AnalysisPage() {
           <div className="analysis-cta">
             <div>
               <p className="eyebrow">
-                <span className="eyebrow__num">03</span> Next
+                <span className="eyebrow__num">03</span> Offline review
               </p>
-              <h2 className="display-sm">Run it on one of your own games.</h2>
+              <h2 className="display-sm">Import a PGN or sync recent Chess.com games — 100% locally.</h2>
             </div>
             <Link className="btn-pill btn-pill--ember" href="/download">
-              Download ChessLab
+              Check download status
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

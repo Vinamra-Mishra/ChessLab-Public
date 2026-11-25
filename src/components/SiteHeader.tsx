@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 
 const NAV = [
   { href: "/", label: "Home" },
-  { href: "/studio", label: "Studio" },
+  { href: "/studio", label: "Workstation" },
   { href: "/analysis", label: "Analysis" },
-  { href: "/tournaments", label: "Tournaments" },
+  { href: "/athena", label: "ATHENA" },
   { href: "/download", label: "Download" },
 ];
 
@@ -44,7 +44,7 @@ export function SiteHeader() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/chesslab-logo.svg" alt="" width={22} height={22} aria-hidden="true" />
               ChessLab
-              <em>Studio</em>
+              <em>Desktop</em>
             </Link>
           </div>
 
@@ -66,15 +66,15 @@ export function SiteHeader() {
           <Plus side="right" />
 
           <div className="site-head__end">
-            <Link className="watch-link" href="/studio">
+            <Link className="watch-link" href="/roadmap">
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <circle cx="10" cy="10" r="8.1" stroke="currentColor" strokeWidth="1.3" />
-                <path d="M8.4 6.9 13 10l-4.6 3.1V6.9Z" fill="currentColor" />
+                <path d="m12.8 7.2-1.7 4.5-4.5 1.7 1.7-4.5 4.5-1.7Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
               </svg>
-              <span>Watch video</span>
+              <span>Roadmap</span>
             </Link>
             <Link className="btn-pill btn-pill--light btn-pill--sm" href="/download" data-magnetic data-spotlight>
-              Get access
+              Download
             </Link>
             <button
               type="button"
@@ -104,7 +104,7 @@ export function SiteHeader() {
             href="/download"
             onClick={() => setOpen(false)}
           >
-            Get access
+            Download
           </Link>
         </div>
       ) : null}

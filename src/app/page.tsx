@@ -6,31 +6,31 @@ import { PieceArt, PieceDefs } from "@/components/Pieces";
 const MODES = [
   {
     num: "01",
-    title: "Play",
-    copy: "A quiet board that gets out of the way — local games, saved on your machine.",
-    href: "/studio",
-    piece: "pawn" as const,
-  },
-  {
-    num: "02",
-    title: "Analyse",
-    copy: "Stockfish 19 in the loop: variations, evaluations, and the reason behind every move.",
+    title: "Analyse & Review",
+    copy: "Dockable Stockfish 19 board with MultiPV lines, 11-tier move badges, interactive eval graph, Highlights filter, and mistake retry.",
     href: "/analysis",
     piece: "knight" as const,
   },
   {
+    num: "02",
+    title: "ATHENA Coach",
+    copy: "Human-like sparring with Maia-3 + ChessMimic, pause-on-blunder coaching, 16-concept verified explanations, and 4-tier mastery.",
+    href: "/athena",
+    piece: "pawn" as const,
+  },
+  {
     num: "03",
-    title: "Compete",
-    copy: "Tournament brackets with real pairings, results and standings — no cloud required.",
-    href: "/tournaments",
+    title: "Studio & Repertoire",
+    copy: "3,865 ECO opening lines, 23 structured blueprints, SM-2 spaced drills, local mistake puzzles, PGN import, and Chess.com sync.",
+    href: "/studio",
     piece: "rook" as const,
   },
 ];
 
 const STATS = [
-  { value: "19", label: "Stockfish build, bundled locally" },
-  { value: "0", label: "Accounts, subscriptions or sign-ins" },
-  { value: "45s", label: "Average full-game review pass" },
+  { value: "29ms", label: "ATHENA p95 local neural inference on CPU" },
+  { value: "3,865", label: "CC0 ECO opening lines & 23 blueprints bundled" },
+  { value: "0", label: "Cloud servers, LLM APIs, or accounts required" },
 ];
 
 export default function Home() {
@@ -52,7 +52,7 @@ export default function Home() {
         <div className="hero__inner">
           <div className="hero__copy">
             <p className="eyebrow rise">
-              <span className="eyebrow__num">(</span> Offline-first chess studio{" "}
+              <span className="eyebrow__num">(</span> Offline Chess Workstation · Powered by ATHENA{" "}
               <span className="eyebrow__num">)</span>
             </p>
 
@@ -68,19 +68,19 @@ export default function Home() {
             </h1>
 
             <p className="hero__lede rise-3">
-              Turn your chess vision into true mastery with intelligent, results-focused
-              analysis — all on your own machine.
+              Local Stockfish 19 analysis, human-like neural sparring, and Stockfish-verified
+              coaching — running 100% offline in pure Rust on your machine.
             </p>
 
             <div className="hero__actions rise-3">
               <Link className="btn-pill btn-pill--light" href="/download" data-magnetic data-spotlight>
-                Play now
+                Download ChessLab
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
-              <Link className="btn-pill btn-pill--outline" href="/studio" data-spotlight>
-                Watch the studio
+              <Link className="btn-pill btn-pill--outline" href="/athena" data-spotlight>
+                Meet ATHENA
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -89,16 +89,16 @@ export default function Home() {
           </div>
 
           <span className="hero__spec hero__spec--left" aria-hidden="true">
-            sicilian · b90
+            athena · 29ms cpu
           </span>
           <span className="hero__spec hero__spec--right" aria-hidden="true">
-            eval +0.42 · depth 34
+            stockfish 19 · 103mb ram
           </span>
 
-          <aside className="hero__card" aria-label="Sample review summary" data-spotlight>
+          <aside className="hero__card" aria-label="Sample ATHENA review summary" data-spotlight>
             <div className="hero__card-top">
               <span className="hero__card-live">
-                <i /> Now analysing
+                <i /> ATHENA · Guided Review
               </span>
               <span>B90 · Najdorf</span>
             </div>
@@ -112,8 +112,8 @@ export default function Home() {
                 <b>92.4%</b>
               </div>
               <div>
-                <span className="hero__card-k">Turning point</span>
-                <b>16…d×e4</b>
+                <span className="hero__card-k">Best Move</span>
+                <b>Rxe7+</b>
               </div>
             </div>
             <div className="hero__card-bar" aria-hidden="true">
@@ -130,7 +130,7 @@ export default function Home() {
             Scroll to explore
           </span>
           <span className="hero__foot-meta">
-            Windows · macOS · Linux <i /> Private beta
+            Tauri v2 · Rust · SQLite <i /> 100% Offline
           </span>
         </div>
       </section>
@@ -140,15 +140,19 @@ export default function Home() {
         <div className="marquee__track">
           {Array.from({ length: 2 }).map((_, group) => (
             <span className="marquee__group" key={group}>
-              <span>Review</span>
+              <span>ATHENA Coach</span>
               <i>✳</i>
-              <span>Repertoire</span>
+              <span>Stockfish 19</span>
               <i>✳</i>
-              <span>Tournaments</span>
+              <span>Guided Sparring</span>
               <i>✳</i>
-              <span>Rankings</span>
+              <span>Game Review</span>
               <i>✳</i>
-              <span>Analysis</span>
+              <span>Opening Studio</span>
+              <i>✳</i>
+              <span>Tactical Puzzles</span>
+              <i>✳</i>
+              <span>Local SQLite</span>
               <i>✳</i>
             </span>
           ))}
@@ -161,17 +165,18 @@ export default function Home() {
           <header className="section-head">
             <div>
               <p className="eyebrow">
-                <span className="eyebrow__num">02</span> What you get
+                <span className="eyebrow__num">02</span> Workstations
               </p>
               <h2 className="display-md">
-                Three ways to
+                Three workstations,
                 <br />
-                <span className="serif">play the long game.</span>
+                <span className="serif">one mastery loop.</span>
               </h2>
             </div>
             <p className="section-head__lede">
-              Everything in ChessLab is arranged around a single loop: play a game, understand
-              it, then come back stronger. No feeds, no streaks, no noise.
+              Play or import a game, uncover the verified concept behind critical mistakes with
+              Stockfish 19 and ATHENA, and lock the pattern in through targeted sparring and
+              spaced drills.
             </p>
           </header>
 
@@ -206,9 +211,9 @@ export default function Home() {
               </div>
             ))}
             <div className="stat stat--cta">
-              <p>Ready to see your own games differently?</p>
+              <p>Ready to train offline with Stockfish 19 and ATHENA?</p>
               <Link className="btn-pill btn-pill--ember" href="/download">
-                Get the beta
+                See release status
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

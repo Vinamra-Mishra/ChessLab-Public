@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "ChessLab — the offline chess studio";
+export const alt = "ChessLab — Offline Chess Analysis & ATHENA AI Coach";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -57,7 +57,7 @@ export default function OpengraphImage() {
               color: "#a7a29a",
             }}
           >
-            OFFLINE STUDIO
+            OFFLINE DESKTOP · ATHENA
           </div>
         </div>
 
@@ -91,13 +91,13 @@ export default function OpengraphImage() {
             style={{
               display: "flex",
               marginTop: 18,
-              maxWidth: 700,
-              fontSize: 23,
+              maxWidth: 740,
+              fontSize: 22,
               lineHeight: 1.45,
               color: "#a7a29a",
             }}
           >
-            Analysis, review, and repertoire — on your own machine. Powered by Stockfish 19.
+            Stockfish 19 analysis, human-like neural sparring, and 4-tier mastery coaching — 100% local in Rust.
           </div>
         </div>
 
@@ -113,10 +113,10 @@ export default function OpengraphImage() {
             color: "#6f6b64",
           }}
         >
-          <span>LOCAL-FIRST</span>
+          <span>TAURI V2 · RUST</span>
           <span>STOCKFISH 19</span>
+          <span>ATHENA CPU</span>
           <span>NO ACCOUNT</span>
-          <span>WINDOWS · MACOS · LINUX</span>
         </div>
       </div>
     ),

@@ -3,30 +3,30 @@ import Link from "next/link";
 import { PieceArt, PieceDefs, type PieceKind } from "@/components/Pieces";
 
 export const metadata: Metadata = {
-  title: "The studio",
+  title: "The workstation",
   description:
-    "ChessLab is a desktop chess studio: local games, an offline Stockfish engine, and study tools arranged around how chess is actually learned.",
+    "Inside the ChessLab desktop shell: Tauri v2 + Rust + SQLite storage, Premiere-style docking, Stockfish 19, 3,865 ECO opening lines, SM-2 puzzles, and local Player Profiles.",
 };
 
 const PILLARS = [
   {
     num: "01",
-    title: "Local by default",
-    copy: "The app ships with its own database. Import a PGN and it stays in a file you can back up, copy, or delete.",
+    title: "Offline-first SQLite",
+    copy: "Local database with automatic corruption quarantine, transactional coaching memory, and immutable local Player Profiles.",
     piece: "rook" as const,
     material: "obsidian" as const,
   },
   {
     num: "02",
-    title: "Engine on tap",
-    copy: "Stockfish 19 is bundled and runs on your CPU, so depth never depends on a connection.",
+    title: "Premiere-style docking",
+    copy: "Resizable splitters, drag-and-drop panel swapping, and persistent layouts across Analysis and Game Review on an AMOLED Black shell.",
     piece: "bishop" as const,
     material: "ivory" as const,
   },
   {
     num: "03",
-    title: "A calm interface",
-    copy: "No dashboards begging for attention. One board, one panel, and the tools you actually use.",
+    title: "Openings & puzzles",
+    copy: "3,865 CC0 ECO lines, transposition-aware repertoire training, Practice Line deviation flags, and SM-2 puzzles extracted from your mistakes.",
     piece: "queen" as const,
     material: "chrome" as const,
   },
@@ -40,33 +40,33 @@ const SURFACES: Array<{
   material: "obsidian" | "ivory" | "chrome" | "ember";
 }> = [
   {
-    title: "The board",
+    title: "The dockable board",
     meta: "Anatomy 01",
-    copy: "A draggable board that keeps coordinate labels honest, highlights the last move, and never hides the piece you are moving behind an overlay.",
+    copy: "ResizeObserver-fitted chessground board with Red/Green/Blue/Yellow coaching arrows, inline Stockfish 19 configuration, and Auto: Play vs Stockfish.",
     piece: "knight",
     material: "obsidian",
   },
   {
-    title: "The panel",
+    title: "Opening Studio & drills",
     meta: "Anatomy 02",
-    copy: "Evaluation, move list, and notes share a single column. Jump to any move to see the position exactly as it was played.",
+    copy: "23 structured opening blueprints, step-back guided theory, Spar From Position handoff into ATHENA, and forgetting-curve drill scheduling.",
     piece: "pawn",
     material: "ivory",
   },
   {
-    title: "The library",
+    title: "Local Game Database",
     meta: "Anatomy 03",
-    copy: "Games grouped by opening, result, and accuracy. Filter without waiting for a network round trip.",
+    copy: "High-speed PGN import, instant opening and player filters, plus optional quiet background sync of your recent Chess.com monthly archives.",
     piece: "bishop",
     material: "chrome",
   },
 ];
 
 const FLOW = [
-  { step: "01", label: "Import", copy: "Drop in a PGN or play directly in the studio." },
-  { step: "02", label: "Review", copy: "The engine walks each phase and marks turning points." },
-  { step: "03", label: "Practise", copy: "Turn the lesson into repertoire lines and drills." },
-  { step: "04", label: "Return", copy: "Come back with the pattern recognised, not memorised." },
+  { step: "01", label: "Import or Sync", copy: "Drop in PGNs or quietly sync your recent Chess.com archives into local SQLite." },
+  { step: "02", label: "Review & Diagnose", copy: "Stockfish 19 and ATHENA score every phase, classify moves, and verify recurring concepts." },
+  { step: "03", label: "Spar & Drill", copy: "Practise weak concepts in Guided Sparring with pause-on-blunder coaching and SM-2 drills." },
+  { step: "04", label: "Retain in Games", copy: "Advance across 4-tier anti-gaming mastery until patterns hold in unseen real games." },
 ];
 
 export default function StudioPage() {
@@ -78,27 +78,28 @@ export default function StudioPage() {
       <section className="studio-hero">
         <div className="studio-hero__copy">
           <p className="eyebrow eyebrow--ink">
-            <span className="eyebrow__num">(</span> The studio{" "}
+            <span className="eyebrow__num">(</span> The workstation{" "}
             <span className="eyebrow__num">)</span>
           </p>
           <h1 className="display-lg">
-            A desk, an engine
+            A desktop workstation
             <br />
-            and <span className="serif">your games.</span>
+            built in <span className="serif">Rust.</span>
           </h1>
           <p className="studio-hero__lede">
-            ChessLab is not a club, a stream, or a ladder. It is a quiet piece of software for
-            the hours you spend actually getting better.
+            An AMOLED Black full-bleed workspace combining a 4-panel tool launcher, dockable
+            Stockfish 19 boards, Opening Studio, SM-2 mistake puzzles, and ATHENA — 100% local on
+            your machine.
           </p>
           <div className="studio-hero__actions">
             <Link className="btn-pill btn-pill--ink" href="/download">
-              Get the beta
+              Download status
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
             <Link className="link-quiet" href="/analysis">
-              See the analysis view
+              Inspect Analysis & Review
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M4 16 16 4M6.5 4H16v9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -106,23 +107,23 @@ export default function StudioPage() {
           </div>
           <dl className="studio-hero__facts">
             <div>
-              <dt>Storage</dt>
-              <dd>Local SQLite</dd>
+              <dt>Runtime</dt>
+              <dd>Tauri v2 · Rust</dd>
             </div>
             <div>
               <dt>Engine</dt>
-              <dd>Stockfish 19</dd>
+              <dd>Stockfish 19 + Burn</dd>
             </div>
             <div>
-              <dt>Platforms</dt>
-              <dd>Win · macOS · Linux</dd>
+              <dt>Footprint</dt>
+              <dd>~103 MB Peak RAM</dd>
             </div>
           </dl>
         </div>
 
         <div className="studio-hero__stage">
           <span className="studio-hero__label" aria-hidden="true">
-            studio · workspace
+            desktop · tauri v2
           </span>
           <div className="studio-hero__piece studio-hero__piece--tall">
             <PieceArt kind="king" material="water" glow label="3D chess king" />
@@ -131,8 +132,8 @@ export default function StudioPage() {
             <PieceArt kind="pawn" material="water" />
           </div>
           <span className="studio-hero__caption" aria-hidden="true">
-            <b>Untitled session</b>
-            <small>12 moves · local</small>
+            <b>ATHENA · Local SQLite</b>
+            <small>0 cloud calls · offline</small>
           </span>
         </div>
       </section>
@@ -146,14 +147,14 @@ export default function StudioPage() {
                 <span className="eyebrow__num">01</span> What it is
               </p>
               <h2 className="display-md">
-                Three principles,
+                Local storage,
                 <br />
-                <span className="serif">no compromises.</span>
+                <span className="serif">zero compromise.</span>
               </h2>
             </div>
             <p className="section-head__lede">
-              Every part of the studio answers to the same constraint: it has to work with the
-              network cable unplugged.
+              Every module in ChessLab runs inside the desktop shell without accounts, telemetry,
+              or network round trips.
             </p>
           </header>
 
@@ -211,14 +212,14 @@ export default function StudioPage() {
                 <span className="eyebrow__num">03</span> How it works
               </p>
               <h2 className="display-md">
-                A loop, not
+                From raw game
                 <br />
-                <span className="serif">a ladder.</span>
+                <span className="serif">to retained skill.</span>
               </h2>
             </div>
             <p className="section-head__lede">
-              The studio is organised around one repeated cycle. Nothing to maintain, nothing
-              to keep up with.
+              ChessLab connects game review, concept verification, sparring, and delayed real-game
+              retention inside one continuous feedback loop.
             </p>
           </header>
 
@@ -235,11 +236,11 @@ export default function StudioPage() {
 
           <div className="studio-cta">
             <div>
-              <h2 className="display-sm">Bring your last ten losses.</h2>
-              <p>That is usually enough to find the pattern.</p>
+              <h2 className="display-sm">Built for Windows, macOS, and Linux — zero telemetry.</h2>
+              <p>Stockfish 19, SQLite, and ATHENA neural weights packaged in one desktop app.</p>
             </div>
             <Link className="btn-pill btn-pill--ember" href="/download">
-              Download ChessLab
+              Check download status
               <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

@@ -2,25 +2,25 @@ import Link from "next/link";
 
 const COLS = [
   {
-    title: "Studio",
+    title: "Workstations",
     links: [
-      { href: "/studio", label: "The studio" },
-      { href: "/analysis", label: "Analysis" },
-      { href: "/tournaments", label: "Tournaments" },
+      { href: "/studio", label: "The workstation" },
+      { href: "/analysis", label: "Analysis & Review" },
+      { href: "/athena", label: "ATHENA Coach" },
     ],
   },
   {
     title: "Product",
     links: [
       { href: "/download", label: "Downloads" },
-      { href: "/roadmap", label: "Roadmap" },
-      { href: "/download", label: "Release notes" },
+      { href: "/roadmap", label: "Release roadmap" },
+      { href: "/download", label: "System specs" },
     ],
   },
   {
     title: "Connect",
     links: [
-      { href: "https://github.com/Vinamra-Mishra", label: "GitHub ↗" },
+      { href: "https://github.com/Vinamra-Mishra/ChessLab-Public", label: "GitHub ↗" },
       { href: "mailto:hello@chesslab.app", label: "Contact ↗" },
     ],
   },
@@ -48,11 +48,11 @@ export function SiteFooter() {
               ChessLab
             </Link>
             <p>
-              An offline-first chess studio. Local analysis, honest review, and a repertoire
-              that stays yours.
+              A 100% local desktop chess workstation. Bundled Stockfish 19, pure-Rust ATHENA
+              coaching, and a SQLite library that stays on your machine.
             </p>
             <span className="chip chip--ink">
-              <i /> In development
+              <i /> Pre-release · Tauri v2
             </span>
           </div>
 
@@ -61,9 +61,9 @@ export function SiteFooter() {
               <div className="site-foot__col" key={col.title}>
                 <h3>{col.title}</h3>
                 {col.links.map((link) => (
-                  <a key={link.label} href={link.href}>
+                  <Link key={link.label} href={link.href}>
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             ))}
@@ -75,11 +75,11 @@ export function SiteFooter() {
         </div>
 
         <div className="site-foot__bottom">
-          <span>© 2026 ChessLab — Made for the long game</span>
+          <span>© 2026 ChessLab — 100% local, zero cloud</span>
           <span className="site-foot__social">
-            <span>Local-first</span>
+            <span>Tauri v2 · Rust</span>
             <span>Stockfish 19</span>
-            <span>No account</span>
+            <span>ATHENA Offline</span>
           </span>
         </div>
       </div>

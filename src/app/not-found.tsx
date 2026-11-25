@@ -23,13 +23,13 @@ export default function NotFound() {
 
       <div className="notfound__actions">
         <Link className="btn-pill btn-pill--light" href="/">
-          Back to the studio
+          Back to ChessLab
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </Link>
-        <Link className="btn-pill btn-pill--outline" href="/roadmap">
-          See the roadmap
+        <Link className="btn-pill btn-pill--outline" href="/athena">
+          Meet ATHENA
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M4 16 16 4M6.5 4H16v9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

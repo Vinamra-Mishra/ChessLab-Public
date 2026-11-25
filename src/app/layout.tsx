@@ -42,25 +42,36 @@ const serif = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://chesslab.app"),
   title: {
-    default: "ChessLab — Master the game before you play it",
+    default: "ChessLab — Offline Chess Analysis & ATHENA AI Coach",
     template: "%s · ChessLab",
   },
   description:
-    "An offline-first chess studio for analysis, review, repertoire, and tournaments. Stockfish 19 on your own machine, with no account and no games sent away.",
+    "A 100% local desktop chess workstation built with Tauri v2, Rust, Stockfish 19, and ATHENA — human-like neural sparring, verified game review, opening studio, and 4-tier mastery tracking with zero cloud.",
   applicationName: "ChessLab",
-  keywords: ["chess", "chess analysis", "Stockfish", "offline chess", "game review", "repertoire", "tournaments"],
+  keywords: [
+    "chess",
+    "chess analysis",
+    "Stockfish 19",
+    "ATHENA AI coach",
+    "Maia-3",
+    "offline chess",
+    "game review",
+    "opening repertoire",
+    "Tauri",
+  ],
   openGraph: {
-    title: "ChessLab — Master the game before you play it",
+    title: "ChessLab — Offline Chess Analysis & ATHENA AI Coach",
     description:
-      "Offline-first analysis, phase-by-phase review, and a repertoire that sticks. Powered by Stockfish 19.",
+      "Stockfish 19 analysis, Maia-3 + ChessMimic human sparring, and Stockfish-verified coaching — 100% local in pure Rust.",
     type: "website",
     siteName: "ChessLab",
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ChessLab — Master the game before you play it",
-    description: "Offline-first chess analysis, on your machine.",
+    title: "ChessLab — Offline Chess Analysis & ATHENA AI Coach",
+    description:
+      "100% local Stockfish 19 analysis, human-like ATHENA sparring, and verified game review on your own CPU.",
   },
 };
 

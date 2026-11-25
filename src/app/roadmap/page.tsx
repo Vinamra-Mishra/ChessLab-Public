@@ -5,55 +5,55 @@ import { PieceArt, PieceDefs } from "@/components/Pieces";
 export const metadata: Metadata = {
   title: "Roadmap",
   description:
-    "What ChessLab is building, in what order, and what has to be true before a public beta is released.",
+    "ChessLab development progress across the Tauri v2 desktop workstations, ATHENA pure-Rust neural coach (95 Rust tests passing), and public beta installer packaging.",
 };
 
 const MILESTONES = [
   {
     phase: "01",
-    kicker: "The foundation",
-    title: "A thoughtful desktop home",
-    status: "In development",
+    kicker: "Phase 01–06 & Workstation Shell",
+    title: "Desktop Foundation & Workstations",
+    status: "Completed",
     state: "active",
-    progress: 68,
+    progress: 100,
     items: [
-      "Tauri v2 desktop app with local SQLite storage",
-      "Offline-first foundations and a private-by-default approach",
-      "Engine integration and position exploration",
+      "Tauri v2 + Rust + SQLite shell with automatic corruption recovery",
+      "AMOLED Black full-bleed workspace, Premiere-style dockable Analysis & Game Review",
+      "Opening Studio (3,865 ECO lines), SM-2 Puzzles, Chess.com background sync & locked Player Profiles",
     ],
   },
   {
     phase: "02",
-    kicker: "The study loop",
-    title: "Turn games into progress",
-    status: "In development",
+    kicker: "ATHENA Neural Advisor",
+    title: "Pure-Rust Local Coaching Engine",
+    status: "Completed",
     state: "active",
-    progress: 41,
+    progress: 100,
     items: [
-      "Game review with phase-by-phase feedback",
-      "Opening repertoire and spaced-repetition practice",
-      "Longitudinal insight into recurring patterns",
+      "Burn Flex CPU runtime (29ms p95, ~103 MB peak RSS) for Maia-3 + ChessMimic sparring",
+      "XGBoost v2 move-risk, 16-concept Stockfish-verified diagnosis & 4-tier anti-gaming mastery",
+      "Guided Sparring pause-on-blunder coaching, victory debriefs & 95/95 Rust backend tests passing",
     ],
   },
   {
     phase: "03",
-    kicker: "Public beta",
-    title: "From the lab to your desktop",
-    status: "Coming soon",
-    state: "queued",
-    progress: 0,
+    kicker: "Public Beta",
+    title: "Cross-Platform Packaging & Installers",
+    status: "In progress",
+    state: "active",
+    progress: 35,
     items: [
-      "Verified Windows, macOS, and Linux installers",
-      "Signed builds and published checksums",
-      "Release notes and an open feedback loop",
+      "Code-signed Windows (.msi/.exe), macOS (.dmg), and Linux (AppImage/.deb) installers",
+      "Published SHA-256 checksums and hardware qualification notes",
+      "Public release notes and open community issue tracker",
     ],
   },
 ];
 
 const PRINCIPLES = [
-  { title: "Local first", copy: "If a feature needs a server, it is not finished." },
-  { title: "Auditable", copy: "Every published build ships with a checksum." },
-  { title: "Quiet", copy: "No gamified streaks, no notification pressure." },
+  { title: "100% Local", copy: "Engine, neural models, and database run on your CPU with the network unplugged." },
+  { title: "Evidence-Gated", copy: "Every coaching model is qualified on held-out games and verified against Stockfish 19." },
+  { title: "Zero Fluff", copy: "No chatbot bloat, no streak pressure, no cloud subscriptions." },
 ];
 
 export default function RoadmapPage() {
@@ -70,16 +70,16 @@ export default function RoadmapPage() {
 
           <div className="rm-hero__grid">
             <h1 className="display-xl">
-              Thoughtful work.
+              Built locally.
               <br />
-              <span className="serif">Real progress.</span>
+              <span className="serif">Verified end to end.</span>
             </h1>
 
             <div className="rm-hero__aside">
               <p>
-                ChessLab is currently in development. Here is the shape of the work — from the
-                private, local-first foundation to a public beta you can install with
-                confidence.
+                Core workstations and ATHENA&apos;s pure-Rust neural advisor are implemented and
+                verified locally. Packaging signed Windows, macOS, and Linux installers is the
+                final gate before public beta.
               </p>
               <Link className="btn-pill btn-pill--outline" href="/download">
                 See planned platforms
@@ -103,9 +103,9 @@ export default function RoadmapPage() {
           </div>
 
           <div className="rm-hero__meta">
-            <span>Updated for the current development cycle</span>
-            <span>No public installer yet</span>
-            <span>Beta status is tracked on this page</span>
+            <span>95/95 Rust backend tests passing</span>
+            <span>ATHENA ~103 MB peak RAM · 29ms CPU</span>
+            <span>Installers in final packaging</span>
           </div>
         </div>
       </section>
